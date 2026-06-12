@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-06-12T23:41:13Z",
+  "analysis_unit": "latest validation-eligible pre-close snapshot per resolved market",
+  "n_brier_rows": 0,
+  "n_eligible_brier_rows": 0,
+  "n_unique_resolved_markets": 0,
+  "n_analysis_rows": 0,
+  "mean_brier": null,
+  "trust_buckets": [
+    {
+      "bucket": "0-40",
+      "mean_brier": null,
+      "n": 0
+    },
+    {
+      "bucket": "40-55",
+      "mean_brier": null,
+      "n": 0
+    },
+    {
+      "bucket": "55-70",
+      "mean_brier": null,
+      "n": 0
+    },
+    {
+      "bucket": "70-85",
+      "mean_brier": null,
+      "n": 0
+    },
+    {
+      "bucket": "85-100",
+      "mean_brier": null,
+      "n": 0
+    }
+  ],
+  "horizon_buckets": [],
+  "categories": [],
+  "market_types": [],
+  "trust_vs_brier": {
+    "correlation": null,
+    "n": 0
+  },
+  "trust_vs_brier_excluding_missing_spread": {
+    "correlation": null,
+    "n": 0
+  },
+  "by_score_version": []
+}
