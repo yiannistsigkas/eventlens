@@ -129,6 +129,20 @@ def best_bid_ask(book, fallback_bid=None, fallback_ask=None):
     return bid, ask
 
 
+def spread_missing_reason(book, fallback_bid=None, fallback_ask=None, fetch_status=None):
+    """Explain why a two-sided spread cannot be observed without changing scoring."""
+    bid, ask = best_bid_ask(book, fallback_bid, fallback_ask)
+    if bid is not None and ask is not None:
+        return None
+    if fetch_status in ("request_failed", "invalid_json", "unexpected_shape"):
+        return f"orderbook_{fetch_status}"
+    if bid is None and ask is None:
+        return "empty_book"
+    if bid is None:
+        return "missing_bid"
+    return "missing_ask"
+
+
 # --- Subscores ----------------------------------------------------------------
 
 def liquidity_score(spread_cents, depth_1pct, depth_5pct, volume_usd, liquidity_usd):
@@ -368,6 +382,12 @@ def main():
         bid, ask = best_bid_ask(m.get("orderbook"), m.get("best_bid"), m.get("best_ask"))
         mid = (bid + ask) / 2 if bid is not None and ask is not None else safe_float(m.get("yes_price_gamma"))
         spread_c = (ask - bid) * 100 if bid is not None and ask is not None else None
+        spread_reason = spread_missing_reason(
+            m.get("orderbook"),
+            m.get("best_bid"),
+            m.get("best_ask"),
+            m.get("orderbook_fetch_status"),
+        )
         d2r = days_to_resolution(m.get("end_date"), m.get("observed_at"))
         market_type = classify_market_type(m.get("question"), m.get("category"))
         validation_eligible, validation_ineligible_reasons, eligibility_source = validation_eligibility(m, mid)
@@ -407,6 +427,7 @@ def main():
                 "price": round(mid, 4) if mid is not None else None,
                 "spread_cents": round(spread_c, 2) if spread_c is not None else None,
                 "spread_is_missing": spread_c is None,  # one-sided books are themselves a quality signal
+                "spread_missing_reason": spread_reason,
                 "volume_usd": m.get("volume_usd"),
                 "end_date": m.get("end_date"),
                 "days_to_resolution": d2r,
@@ -458,10 +479,15 @@ def main():
     d2rs = [r["days_to_resolution"] for r in rows if r["days_to_resolution"] is not None]
     hbuckets = Counter(r["horizon_bucket"] for r in rows if r["horizon_bucket"])
     cats = Counter(str(r["category"]) for r in rows)
+    missing_spread_reasons = Counter(
+        r["spread_missing_reason"] for r in rows if r["spread_is_missing"]
+    )
     print("\nDiagnostics")
     print(f"  Rows scored:                {n}")
     print(f"  Missing price:              {sum(r['price'] is None for r in rows)}")
     print(f"  Missing spread:             {sum(r['spread_is_missing'] for r in rows)}")
+    for reason, count in sorted(missing_spread_reasons.items()):
+        print(f"    {reason:<25} {count}")
     print(f"  Concentration placeholders: {sum(r['concentration_is_placeholder'] for r in rows)}")
     print(f"  Category = 'Other':         {sum(r['category'] == 'Other' for r in rows)}")
     if n:

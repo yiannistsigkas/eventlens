@@ -215,6 +215,7 @@ def main():
                 "brier": (r["price"] - res["outcome_yes"]) ** 2,
                 "composite_trust_score": r.get("composite_trust_score"),
                 "spread_is_missing": r.get("spread_is_missing"),
+                "spread_missing_reason": r.get("spread_missing_reason"),
                 "validation_eligible": True,
                 "validation_eligibility_source": eligibility_source,
             }

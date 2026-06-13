@@ -10,6 +10,15 @@
     python scripts/resolution_tracker.py
     python scripts/validation_report.py
 
+The separate freshness monitor runs independently of this chain and warns if
+the newest raw snapshot is more than 36 hours old:
+
+    python scripts/check_data_freshness.py --max-age-hours 36 --notify
+
+Install its macOS LaunchAgent (daily at 21:05 local time):
+
+    scripts/install_freshness_launchagent.sh
+
 ## Sampling (v0.2 — sample for validation, not just volume)
 Top-volume-only sampling yields liquid but slow-resolving markets that starve
 the Brier validation loop. The fetcher builds a stratified sample instead:
@@ -42,7 +51,7 @@ Deduplicated by market_id; each row carries `sample_bucket`.
 2. Nothing historical is overwritten. Formula changes increment score_version
    (v0.2 = stronger resolution heuristic + horizon fields).
 3. Placeholders and gaps are explicit (concentration_is_placeholder,
-   spread_is_missing, resolution_llm_analyzed=False).
+   spread_is_missing, spread_missing_reason, resolution_llm_analyzed=False).
 4. Category calibration uses shrinkage (n/(n+50)) toward a global prior and
    reports confidence; the table is rebuilt from real resolved markets by
    resolution_tracker.py (one observation per market: its latest pre-close
@@ -50,7 +59,7 @@ Deduplicated by market_id; each row carries `sample_bucket`.
 
 ## Row fields added in v0.2
 - sample_bucket, days_to_resolution, horizon_bucket (0-7d / 8-30d / 31-90d / 90d+),
-  spread_is_missing
+  spread_is_missing, spread_missing_reason
 
 ## Metadata patch v0.2.1
 - validation_eligible plus stable ineligibility reason codes
@@ -61,10 +70,9 @@ Deduplicated by market_id; each row carries `sample_bucket`.
   so score_version remains v0.2
 
 ## Validation report
-Primary tables use the latest validation-eligible pre-close snapshot per
-resolved market. This prevents frequently sampled markets from dominating
-mean Brier and correlation estimates. Score-version cuts retain one latest
-snapshot per market per version.
+Primary tables use the latest validation-eligible snapshot observed at least
+24 hours before close/resolution, as frozen in METHODOLOGY.md. Markets without
+such a snapshot remain in short-horizon descriptive analysis only.
 
 ## Resolution heuristic v0.2
 Asks "can this resolve cleanly under plausible edge cases?", not just "is

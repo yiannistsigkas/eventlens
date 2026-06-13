@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.eventlens.freshness</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/anaconda3/bin/python3</string>
+        <string>/Users/yiannis/Downloads/Brier/scripts/check_data_freshness.py</string>
+        <string>--max-age-hours</string>
+        <string>36</string>
+        <string>--notify</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/yiannis/Downloads/Brier</string>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>21</integer>
+        <key>Minute</key>
+        <integer>5</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/yiannis/Library/Logs/eventlens-freshness.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yiannis/Library/Logs/eventlens-freshness.log</string>
+</dict>
+</plist>

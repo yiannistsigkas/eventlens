@@ -1,6 +1,9 @@
 import os
 import sys
+import json
+import tempfile
 import unittest
+from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(ROOT, "scripts")
@@ -8,6 +11,7 @@ if SCRIPTS not in sys.path:
     sys.path.insert(0, SCRIPTS)
 
 import fetch_polymarket_markets
+import check_data_freshness
 import resolution_tracker
 import score_markets
 import validation_report
@@ -77,6 +81,37 @@ class ScoreMetadataTests(unittest.TestCase):
             "sports_prop",
         )
 
+    def test_spread_missing_reason_distinguishes_book_states(self):
+        two_sided = {
+            "bids": [{"price": "0.40", "size": "10"}],
+            "asks": [{"price": "0.42", "size": "10"}],
+        }
+        self.assertIsNone(score_markets.spread_missing_reason(two_sided))
+        self.assertEqual(
+            score_markets.spread_missing_reason({"bids": [], "asks": []}),
+            "empty_book",
+        )
+        self.assertEqual(
+            score_markets.spread_missing_reason(
+                {"bids": [], "asks": [{"price": "0.42", "size": "10"}]}
+            ),
+            "missing_bid",
+        )
+        self.assertEqual(
+            score_markets.spread_missing_reason(
+                {"bids": [{"price": "0.40", "size": "10"}], "asks": []}
+            ),
+            "missing_ask",
+        )
+
+    def test_spread_missing_reason_preserves_fetch_failure(self):
+        self.assertEqual(
+            score_markets.spread_missing_reason(
+                None, fetch_status="request_failed"
+            ),
+            "orderbook_request_failed",
+        )
+
     def test_existing_snapshot_key_shape_matches_append_guard(self):
         row = {"market_id": 1, "score_version": "v0.2", "observed_at": "2026-06-13T00:00:00Z"}
         key = (str(row["market_id"]), row["score_version"], row["observed_at"])
@@ -97,6 +132,52 @@ class FetchFilterTests(unittest.TestCase):
                 {"clobTokenIds": '["a", "b"]', "endDate": "2099-01-01T00:00:00Z"}
             )
         )
+
+
+class FreshnessTests(unittest.TestCase):
+    def write_snapshot(self, directory, name, fetched_at):
+        path = os.path.join(directory, name)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump({"fetched_at": fetched_at}, f)
+        return path
+
+    def test_freshness_uses_embedded_fetch_time(self):
+        with tempfile.TemporaryDirectory() as raw_dir:
+            self.write_snapshot(
+                raw_dir,
+                "raw_snapshot_20260613T000000Z.json",
+                "2026-06-13T00:00:00Z",
+            )
+            status = check_data_freshness.freshness_status(
+                raw_dir,
+                max_age_hours=36,
+                now=datetime(2026, 6, 14, 0, 0, tzinfo=timezone.utc),
+            )
+            self.assertTrue(status["ok"])
+            self.assertEqual(status["age_hours"], 24.0)
+
+    def test_freshness_flags_stale_or_missing_data(self):
+        with tempfile.TemporaryDirectory() as raw_dir:
+            missing = check_data_freshness.freshness_status(
+                raw_dir,
+                now=datetime(2026, 6, 14, 13, 0, tzinfo=timezone.utc),
+            )
+            self.assertFalse(missing["ok"])
+            self.assertEqual(missing["reason"], "no_valid_snapshot")
+
+            self.write_snapshot(
+                raw_dir,
+                "raw_snapshot_20260613T000000Z.json",
+                "2026-06-13T00:00:00Z",
+            )
+            stale = check_data_freshness.freshness_status(
+                raw_dir,
+                max_age_hours=36,
+                now=datetime(2026, 6, 14, 13, 0, tzinfo=timezone.utc),
+            )
+            self.assertFalse(stale["ok"])
+            self.assertEqual(stale["reason"], "snapshot_stale")
+            self.assertEqual(stale["age_hours"], 37.0)
 
 
 class ResolutionTests(unittest.TestCase):

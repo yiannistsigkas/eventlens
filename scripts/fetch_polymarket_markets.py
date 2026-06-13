@@ -240,13 +240,14 @@ def fetch_orderbook(token_id: str):
         book = resp.json()
         if not isinstance(book, dict) or ("bids" not in book and "asks" not in book):
             dump_debug("clob_book_unexpected_shape", book)
-        return book
+            return book, "unexpected_shape"
+        return book, "ok"
     except requests.RequestException as exc:
         print(f"  [warn] orderbook fetch failed for {token_id[:16]}…: {exc}")
-        return None
+        return None, "request_failed"
     except ValueError:
         dump_debug("clob_book_not_json", resp.text[:2000])
-        return None
+        return None, "invalid_json"
 
 
 def fetch_top_holders(condition_id: str):
@@ -282,7 +283,7 @@ def build_snapshot() -> dict:
         prices = parse_maybe_json(m.get("outcomePrices")) or []
 
         yes_token = str(token_ids[0])
-        book = fetch_orderbook(yes_token)
+        book, book_fetch_status = fetch_orderbook(yes_token)
         time.sleep(REQUEST_PAUSE_S)
         holders = fetch_top_holders(m.get("conditionId", "")) if m.get("conditionId") else None
         time.sleep(REQUEST_PAUSE_S)
@@ -307,6 +308,7 @@ def build_snapshot() -> dict:
                 "liquidity_usd": safe_float(m.get("liquidityNum"), default=safe_float(m.get("liquidity"), 0.0)),
                 "yes_token_id": yes_token,
                 "orderbook": book,        # full book preserved — depth computed at scoring time
+                "orderbook_fetch_status": book_fetch_status,
                 "holders_raw": holders,   # may be None; concentration falls back gracefully
                 "observed_at": ts,
             }
