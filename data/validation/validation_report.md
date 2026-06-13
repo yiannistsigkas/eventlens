@@ -1,16 +1,17 @@
 # EventLens Validation Report
 
-Generated: `2026-06-12T23:54:34Z`
+Generated: `2026-06-13T00:03:14Z`
 
 - Brier rows: 0
 - Eligible Brier rows: 0
 - Unique resolved markets: 0
 - Primary analysis rows: 0
+- Markets excluded from primary (no 24h-prior snapshot): 0
 - Mean Brier: N/A
 - Trust vs Brier correlation: N/A (n=0)
 - Trust vs Brier excluding missing spreads: N/A (n=0)
 
-Primary statistics use the latest eligible pre-close snapshot per market.
+Primary statistics use the latest eligible snapshot observed at least 24 hours before close/resolution (pre-registered in METHODOLOGY.md). Markets with only same-day snapshots appear in the short-horizon descriptive section, not the headline.
 
 ## Trust Buckets
 
@@ -36,6 +37,14 @@ Primary statistics use the latest eligible pre-close snapshot per market.
 
 | Market type | Mean Brier | n |
 | --- | --- | --- |
+
+## Short-Horizon Descriptive (excluded from primary)
+
+- Markets: 0
+- Mean Brier: N/A
+- Trust vs Brier correlation: N/A (n=0)
+
+These markets had no eligible snapshot at least 24 hours before close. Descriptive only — not part of the pre-registered primary validation.
 
 ## Score Versions
 

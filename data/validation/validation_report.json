@@ -1,10 +1,21 @@
 {
-  "generated_at": "2026-06-12T23:54:34Z",
-  "analysis_unit": "latest validation-eligible pre-close snapshot per resolved market",
+  "generated_at": "2026-06-13T00:03:14Z",
+  "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
+  "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
   "n_brier_rows": 0,
   "n_eligible_brier_rows": 0,
   "n_unique_resolved_markets": 0,
   "n_analysis_rows": 0,
+  "n_markets_excluded_no_24h_snapshot": 0,
+  "short_horizon_descriptive": {
+    "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
+    "n": 0,
+    "mean_brier": null,
+    "trust_vs_brier": {
+      "correlation": null,
+      "n": 0
+    }
+  },
   "mean_brier": null,
   "trust_buckets": [
     {

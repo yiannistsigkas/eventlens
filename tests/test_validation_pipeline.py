@@ -129,10 +129,13 @@ class ResolutionTests(unittest.TestCase):
 
 class ValidationReportTests(unittest.TestCase):
     def setUp(self):
+        # Markets a and b close >=24h after their snapshots (primary-eligible);
+        # market c only has a same-day snapshot (short-horizon descriptive).
         self.rows = [
             {
                 "market_id": "a",
                 "observed_at": "2026-06-12T10:00:00Z",
+                "closed_time": "2026-06-14T12:00:00Z",
                 "composite_trust_score": 20,
                 "brier": 0.36,
                 "validation_eligible": True,
@@ -145,6 +148,7 @@ class ValidationReportTests(unittest.TestCase):
             {
                 "market_id": "a",
                 "observed_at": "2026-06-12T11:00:00Z",
+                "closed_time": "2026-06-14T12:00:00Z",
                 "composite_trust_score": 30,
                 "brier": 0.36,
                 "validation_eligible": True,
@@ -157,6 +161,7 @@ class ValidationReportTests(unittest.TestCase):
             {
                 "market_id": "b",
                 "observed_at": "2026-06-12T11:00:00Z",
+                "closed_time": "2026-06-14T12:00:00Z",
                 "composite_trust_score": 80,
                 "brier": 0.01,
                 "validation_eligible": True,
@@ -166,19 +171,50 @@ class ValidationReportTests(unittest.TestCase):
                 "market_type": "crypto_price",
                 "score_version": "v0.2",
             },
+            {
+                "market_id": "c",
+                "observed_at": "2026-06-12T23:00:00Z",
+                "closed_time": "2026-06-13T01:00:00Z",
+                "composite_trust_score": 40,
+                "brier": 0.25,
+                "validation_eligible": True,
+                "spread_is_missing": False,
+                "horizon_bucket": "0-7d",
+                "category": "Sports",
+                "market_type": "sports_prop",
+                "score_version": "v0.2",
+            },
         ]
 
-    def test_report_uses_latest_snapshot_per_market(self):
+    def test_report_uses_latest_24h_prior_snapshot_per_market(self):
         report = validation_report.build_report(self.rows)
-        self.assertEqual(report["n_brier_rows"], 3)
-        self.assertEqual(report["n_unique_resolved_markets"], 2)
+        self.assertEqual(report["n_brier_rows"], 4)
+        self.assertEqual(report["n_unique_resolved_markets"], 3)
         self.assertEqual(report["n_analysis_rows"], 2)
+        self.assertEqual(report["primary_snapshot_rule"],
+                         "latest eligible snapshot at least 24h before close")
         self.assertAlmostEqual(report["mean_brier"], 0.185)
         self.assertAlmostEqual(report["trust_vs_brier"]["correlation"], -1.0)
         self.assertEqual(report["trust_vs_brier_excluding_missing_spread"]["n"], 1)
 
+    def test_same_day_market_goes_to_short_horizon_descriptive_not_primary(self):
+        report = validation_report.build_report(self.rows)
+        self.assertEqual(report["n_markets_excluded_no_24h_snapshot"], 1)
+        self.assertEqual(report["short_horizon_descriptive"]["n"], 1)
+        self.assertAlmostEqual(report["short_horizon_descriptive"]["mean_brier"], 0.25)
+        # the same-day market must not leak into the primary trust buckets
+        primary_n = sum(item["n"] for item in report["trust_buckets"])
+        self.assertEqual(primary_n, 2)
+
+    def test_snapshot_inside_24h_window_is_not_primary(self):
+        primary = validation_report.primary_rows_24h_buffer(self.rows)
+        self.assertEqual({row["market_id"] for row in primary}, {"a", "b"})
+        # market a: the 11:00 snapshot is still >=24h before close, so it wins
+        row_a = next(row for row in primary if row["market_id"] == "a")
+        self.assertEqual(row_a["observed_at"], "2026-06-12T11:00:00Z")
+
     def test_svg_contains_points_and_fit(self):
-        primary = validation_report.latest_rows(self.rows)
+        primary = validation_report.primary_rows_24h_buffer(self.rows)
         svg = validation_report.render_svg(primary)
         self.assertIn("<svg", svg)
         self.assertEqual(svg.count("<circle"), 2)

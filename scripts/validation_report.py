@@ -1,10 +1,13 @@
 """
 Build the EventLens trust-vs-Brier validation report.
 
-Primary statistics use one observation per resolved market: the latest
-validation-eligible pre-close snapshot. This prevents frequently sampled
-markets from dominating the thesis tables. Score-version cuts use one latest
-snapshot per market per version so methodology comparisons remain visible.
+Primary statistics use one observation per resolved market, selected by the
+pre-registered METHODOLOGY.md rule: the latest validation-eligible snapshot
+observed at least 24 hours before close/resolution. Markets whose only
+eligible snapshots fall inside that 24h window are excluded from the primary
+headline and reported separately as short-horizon descriptive evidence.
+Score-version cuts use one latest snapshot per market per version so
+methodology comparisons remain visible.
 """
 
 import argparse
@@ -12,12 +15,15 @@ import json
 import math
 import os
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 DEFAULT_INPUT = os.path.join("data", "validation", "brier_rows.json")
 DEFAULT_JSON = os.path.join("data", "validation", "validation_report.json")
 DEFAULT_MARKDOWN = os.path.join("data", "validation", "validation_report.md")
 DEFAULT_CHART = os.path.join("data", "validation", "trust_vs_brier.svg")
+
+PRIMARY_SNAPSHOT_BUFFER_HOURS = 24
+PRIMARY_SNAPSHOT_RULE = "latest eligible snapshot at least 24h before close"
 
 TRUST_BUCKETS = [
     ("0-40", 0, 40),
@@ -63,10 +69,43 @@ def valid_analysis_row(row):
     )
 
 
+def parse_ts(s):
+    """Tolerates both '2026-06-12T22:40:52Z' and '2026-06-12 22:40:52+00'."""
+    if not s:
+        return None
+    s = str(s).strip().replace(" ", "T", 1).replace("Z", "+00:00")
+    if s.endswith("+00"):
+        s += ":00"
+    try:
+        return datetime.fromisoformat(s)
+    except ValueError:
+        return None
+
+
 def latest_rows(rows, key_fields=("market_id",)):
     latest = {}
     for row in rows:
         key = tuple(str(row.get(field)) for field in key_fields)
+        current = latest.get(key)
+        if current is None or str(row["observed_at"]) > str(current["observed_at"]):
+            latest[key] = row
+    return list(latest.values())
+
+
+def primary_rows_24h_buffer(rows):
+    """Pre-registered primary selection (METHODOLOGY.md): per market, the
+    latest eligible snapshot observed at least 24h before close/resolution.
+    Guards the headline against last-minute price-collapse contamination."""
+    latest = {}
+    buffer = timedelta(hours=PRIMARY_SNAPSHOT_BUFFER_HOURS)
+    for row in rows:
+        observed = parse_ts(row.get("observed_at"))
+        closed = parse_ts(row.get("closed_time"))
+        if observed is None or closed is None:
+            continue
+        if observed > closed - buffer:
+            continue
+        key = str(row.get("market_id"))
         current = latest.get(key)
         if current is None or str(row["observed_at"]) > str(current["observed_at"]):
             latest[key] = row
@@ -136,15 +175,31 @@ def score_version_summary(rows):
 
 def build_report(rows):
     eligible_rows = [row for row in rows if valid_analysis_row(row)]
-    primary_rows = latest_rows(eligible_rows)
+    primary_rows = primary_rows_24h_buffer(eligible_rows)
     no_missing_spread = [row for row in primary_rows if row.get("spread_is_missing") is False]
+
+    # Markets with eligible rows but no snapshot >=24h before close: excluded
+    # from the headline, reported as short-horizon descriptive evidence only.
+    primary_ids = {str(row["market_id"]) for row in primary_rows}
+    short_horizon_rows = latest_rows(
+        [row for row in eligible_rows if str(row["market_id"]) not in primary_ids]
+    )
+
     return {
         "generated_at": utc_now(),
-        "analysis_unit": "latest validation-eligible pre-close snapshot per resolved market",
+        "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
+        "primary_snapshot_rule": PRIMARY_SNAPSHOT_RULE,
         "n_brier_rows": len(rows),
         "n_eligible_brier_rows": len(eligible_rows),
         "n_unique_resolved_markets": len({str(row["market_id"]) for row in eligible_rows}),
         "n_analysis_rows": len(primary_rows),
+        "n_markets_excluded_no_24h_snapshot": len(short_horizon_rows),
+        "short_horizon_descriptive": {
+            "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
+            "n": len(short_horizon_rows),
+            "mean_brier": mean([float(row["brier"]) for row in short_horizon_rows]),
+            "trust_vs_brier": pearson(short_horizon_rows),
+        },
         "mean_brier": mean([float(row["brier"]) for row in primary_rows]),
         "trust_buckets": trust_bucket_summary(primary_rows),
         "horizon_buckets": grouped_summary(primary_rows, "horizon_bucket"),
@@ -181,6 +236,7 @@ def render_markdown(report):
         f"- Eligible Brier rows: {report['n_eligible_brier_rows']}",
         f"- Unique resolved markets: {report['n_unique_resolved_markets']}",
         f"- Primary analysis rows: {report['n_analysis_rows']}",
+        f"- Markets excluded from primary (no 24h-prior snapshot): {report['n_markets_excluded_no_24h_snapshot']}",
         f"- Mean Brier: {fmt_number(report['mean_brier'])}",
         f"- Trust vs Brier correlation: {fmt_number(correlation['correlation'])} (n={correlation['n']})",
         (
@@ -188,7 +244,10 @@ def render_markdown(report):
             f"{fmt_number(correlation_no_spread['correlation'])} (n={correlation_no_spread['n']})"
         ),
         "",
-        "Primary statistics use the latest eligible pre-close snapshot per market.",
+        "Primary statistics use the latest eligible snapshot observed at least "
+        "24 hours before close/resolution (pre-registered in METHODOLOGY.md). "
+        "Markets with only same-day snapshots appear in the short-horizon "
+        "descriptive section, not the headline.",
         "",
         "## Trust Buckets",
         "",
@@ -220,6 +279,21 @@ def render_markdown(report):
                 ),
             ]
         )
+
+    short = report["short_horizon_descriptive"]
+    sections.extend(
+        [
+            "",
+            "## Short-Horizon Descriptive (excluded from primary)",
+            "",
+            f"- Markets: {short['n']}",
+            f"- Mean Brier: {fmt_number(short['mean_brier'])}",
+            f"- Trust vs Brier correlation: {fmt_number(short['trust_vs_brier']['correlation'])} (n={short['trust_vs_brier']['n']})",
+            "",
+            "These markets had no eligible snapshot at least 24 hours before close. "
+            "Descriptive only — not part of the pre-registered primary validation.",
+        ]
+    )
 
     sections.extend(["", "## Score Versions", ""])
     sections.append(
@@ -343,7 +417,7 @@ def main():
     write_text(args.json_output, json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     write_text(args.markdown_output, render_markdown(report))
 
-    primary_rows = latest_rows([row for row in rows if valid_analysis_row(row)])
+    primary_rows = primary_rows_24h_buffer([row for row in rows if valid_analysis_row(row)])
     chart_status = "not generated (need at least 2 resolved markets)"
     if len(primary_rows) >= 2:
         write_text(args.chart_output, render_svg(primary_rows))
