@@ -34,15 +34,29 @@ DATA_API = "https://data-api.polymarket.com"
 
 RAW_DIR = os.path.join("data", "raw")
 DEBUG_DIR = os.path.join("data", "debug")
+METADATA_DIR = os.path.join("data", "metadata_archive")
 
+# Collection-policy version is independent of score_version. It records WHY a
+# market was observed (breadth), never HOW it was scored (the frozen v0.2
+# formula). Widening breadth during the freeze bumps this, not score_version.
+COLLECTION_POLICY_VERSION = "v0.2-wide-300"
+
+# Stratified, validation-oriented breadth (~300 after dedup). Tilted toward
+# fast-resolving markets so the resolved-market count — the real bottleneck —
+# grows faster, while low_liquidity keeps the thin tail the score must flag.
 BUCKET_TARGETS = [
-    ("top_volume", 30),
-    ("short_horizon", 30),
-    ("low_liquidity", 20),
-    ("category_diverse", 20),
+    ("top_volume", 75),
+    ("short_horizon", 75),
+    ("medium_horizon", 50),
+    ("low_liquidity", 50),
+    ("category_diverse", 50),
 ]
-VOLUME_FLOOR_USD = 100      # keeps short-horizon/low-liquidity buckets tradeable, not dead
+VOLUME_FLOOR_USD = 100      # keeps horizon/low-liquidity buckets tradeable, not dead
 SHORT_HORIZON_DAYS = 30
+MEDIUM_HORIZON_DAYS = 90
+METADATA_ARCHIVE_MAX_PAGES = 12   # ~1200 active markets by volume; supplies global volume rank.
+                                  # Markets below this depth keep volume_rank_at_fetch = None,
+                                  # which itself reads as "deep volume tail".
 REQUEST_PAUSE_S = 0.25
 TIMEOUT_S = 30
 
@@ -150,6 +164,47 @@ def gamma_markets_paged(extra_params: dict, min_usable: int, max_pages: int = 5)
     return out
 
 
+def slim_metadata(m: dict) -> dict:
+    """Cheap, book-free record of a market's universe-level state. Tier 1:
+    preserves optionality (we know what existed each day) without the
+    expensive per-market book/holder calls that Tier 2 scoring makes."""
+    return {
+        "market_id": str(m.get("id")),
+        "question": m.get("question"),
+        "category": extract_category(m),
+        "slug": m.get("slug"),
+        "end_date": m.get("endDate"),
+        "closed": bool(m.get("closed")),
+        "active": bool(m.get("active")),
+        "volume_usd": safe_float(m.get("volumeNum"), default=safe_float(m.get("volume"), 0.0)),
+        "liquidity_usd": safe_float(m.get("liquidityNum"), default=safe_float(m.get("liquidity"), 0.0)),
+        "outcome_labels": parse_maybe_json(m.get("outcomes")) or [],
+    }
+
+
+def build_metadata_archive() -> tuple:
+    """Tier 1 — page active markets by volume desc and store slim metadata for
+    all of them. Returns (records, volume_rank_map). The rank map gives every
+    market a global volume_rank_at_fetch so the scored sample can later be
+    stratified by where each market sat in the full universe."""
+    seen, records = set(), []
+    for page in range(METADATA_ARCHIVE_MAX_PAGES):
+        rows = gamma_markets({"order": "volumeNum", "ascending": "false", "offset": page * 100}, limit=100)
+        if not rows:
+            break
+        for m in rows:
+            if not isinstance(m, dict):
+                continue
+            mid = str(m.get("id"))
+            if mid in seen:
+                continue
+            seen.add(mid)
+            records.append(slim_metadata(m))
+    records.sort(key=lambda r: (r["volume_usd"] is None, -(r["volume_usd"] or 0.0)))
+    rank_map = {r["market_id"]: i + 1 for i, r in enumerate(records)}
+    return records, rank_map
+
+
 def usable(m) -> bool:
     """Scoreable = has a tradeable book and a deadline still in the future.
     Gamma returns some 'active' markets whose endDate is already past — stale
@@ -189,30 +244,42 @@ def build_sample() -> list:
     targets = dict(BUCKET_TARGETS)
 
     take("top_volume",
-         gamma_markets({"order": "volumeNum", "ascending": "false"}, limit=100),
+         gamma_markets_paged({"order": "volumeNum", "ascending": "false"},
+                             min_usable=targets["top_volume"], max_pages=3),
          targets["top_volume"])
 
     take("short_horizon",
-         gamma_markets({
+         gamma_markets_paged({
              "order": "endDate", "ascending": "true",
              "end_date_min": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
              "end_date_max": (now + timedelta(days=SHORT_HORIZON_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ"),
              "volume_num_min": VOLUME_FLOOR_USD,
-         }, limit=100),
+         }, min_usable=targets["short_horizon"], max_pages=3),
          targets["short_horizon"])
+
+    # Medium horizon: resolves in 30-90d. Stable validation sample between the
+    # same-day rush and the multi-year futures tail.
+    take("medium_horizon",
+         gamma_markets_paged({
+             "order": "endDate", "ascending": "true",
+             "end_date_min": (now + timedelta(days=SHORT_HORIZON_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             "end_date_max": (now + timedelta(days=MEDIUM_HORIZON_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             "volume_num_min": VOLUME_FLOOR_USD,
+         }, min_usable=targets["medium_horizon"], max_pages=3),
+         targets["medium_horizon"])
 
     # The lowest-liquidity "active" markets are mostly stale/expired, so this
     # bucket needs paging to find enough live ones.
     take("low_liquidity",
          gamma_markets_paged({"order": "liquidityNum", "ascending": "true",
                               "volume_num_min": VOLUME_FLOOR_USD},
-                             min_usable=targets["low_liquidity"] * 2),
+                             min_usable=targets["low_liquidity"] * 2, max_pages=8),
          targets["low_liquidity"])
 
     # Category-diverse: round-robin the categories least represented so far.
     pool = gamma_markets_paged({"order": "volumeNum", "ascending": "false",
                                 "volume_num_min": VOLUME_FLOOR_USD},
-                               min_usable=120, max_pages=3)
+                               min_usable=250, max_pages=5)
     by_cat = {}
     for m in pool:
         if not usable(m) or str(m.get("id")) in chosen_ids:
@@ -269,9 +336,10 @@ def fetch_top_holders(condition_id: str):
         return None
 
 
-def build_snapshot() -> dict:
+def build_snapshot(volume_rank_map=None) -> dict:
+    volume_rank_map = volume_rank_map or {}
     ts = utc_now()
-    print(f"EventLens fetch @ {ts}")
+    print(f"EventLens fetch @ {ts} (collection policy {COLLECTION_POLICY_VERSION})")
     print("Building stratified sample:")
     sample = build_sample()
     print(f"Sample size after dedup: {len(sample)}")
@@ -288,14 +356,17 @@ def build_snapshot() -> dict:
         holders = fetch_top_holders(m.get("conditionId", "")) if m.get("conditionId") else None
         time.sleep(REQUEST_PAUSE_S)
 
+        market_id = str(m.get("id"))
         records.append(
             {
-                "market_id": str(m.get("id")),
+                "market_id": market_id,
                 "condition_id": m.get("conditionId"),
                 "question": m.get("question"),
                 "slug": m.get("slug"),
                 "category": extract_category(m),
                 "sample_bucket": bucket,
+                "collection_policy_version": COLLECTION_POLICY_VERSION,
+                "volume_rank_at_fetch": volume_rank_map.get(market_id),
                 "resolution_text": m.get("description"),
                 "end_date": m.get("endDate"),
                 "created_at": m.get("createdAt"),
@@ -309,7 +380,9 @@ def build_snapshot() -> dict:
                 "yes_token_id": yes_token,
                 "orderbook": book,        # full book preserved — depth computed at scoring time
                 "orderbook_fetch_status": book_fetch_status,
+                "orderbook_available": isinstance(book, dict) and book_fetch_status == "ok",
                 "holders_raw": holders,   # may be None; concentration falls back gracefully
+                "holders_available": bool(holders),
                 "observed_at": ts,
             }
         )
@@ -319,14 +392,38 @@ def build_snapshot() -> dict:
         "snapshot_type": "raw",
         "platform": "Polymarket",
         "fetched_at": ts,
+        "collection_policy_version": COLLECTION_POLICY_VERSION,
         "n_markets": len(records),
         "markets": records,
     }
 
 
+def write_metadata_archive(records, ts):
+    os.makedirs(METADATA_DIR, exist_ok=True)
+    fname = f"metadata_{ts.replace(':', '').replace('-', '')}.json"
+    path = os.path.join(METADATA_DIR, fname)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "archive_type": "active_market_metadata",
+                "collection_policy_version": COLLECTION_POLICY_VERSION,
+                "fetched_at": ts,
+                "n_markets": len(records),
+                "markets": records,
+            },
+            f, ensure_ascii=False,
+        )
+    print(f"Tier-1 metadata archive: {len(records)} active markets -> {path}")
+
+
 def main():
     os.makedirs(RAW_DIR, exist_ok=True)
-    snapshot = build_snapshot()
+    print("Tier 1 — archiving active-market metadata for global volume rank...")
+    metadata, volume_rank_map = build_metadata_archive()
+
+    snapshot = build_snapshot(volume_rank_map)
+    write_metadata_archive(metadata, snapshot["fetched_at"])
+
     # Append-only: filename carries the timestamp; never overwrite a prior file.
     fname = f"raw_snapshot_{snapshot['fetched_at'].replace(':', '').replace('-', '')}.json"
     path = os.path.join(RAW_DIR, fname)

@@ -322,6 +322,20 @@ def validation_eligibility(market, price):
     return not reasons, reasons, source
 
 
+def data_quality_tier(orderbook_available, spread_is_missing, concentration_is_placeholder):
+    """Metadata only — never enters scoring. Lets validation later separate
+    high-data-quality markets from the thin tail a wide net pulls in, so the
+    noisy markets don't quietly dominate the error metrics.
+      low    — no usable two-sided price discovery (no book or one-sided)
+      medium — priced, but holder concentration is a placeholder
+      high   — real two-sided book and real holder data"""
+    if not orderbook_available or spread_is_missing:
+        return "low"
+    if concentration_is_placeholder:
+        return "medium"
+    return "high"
+
+
 def category_calibration_score(category):
     """Shrinkage-blended category Brier -> score. Low confidence at small n."""
     entry = CALIBRATION_TABLE.get(category, {"brier": GLOBAL_PRIOR_BRIER, "n": 0})
@@ -400,6 +414,8 @@ def main():
             safe_float(m.get("liquidity_usd"), 0.0),
         )
         conc, conc_reason, conc_placeholder = concentration_score(m.get("holders_raw"), m.get("yes_token_id"))
+        orderbook_available = bool(m.get("orderbook_available"))
+        quality_tier = data_quality_tier(orderbook_available, spread_c is None, conc_placeholder)
         res, res_reason, res_flags = resolution_clarity_score(
             m.get("resolution_text"), m.get("question"), price=mid, days_to_res=d2r
         )
@@ -423,11 +439,16 @@ def main():
                 "category": m.get("category"),
                 "url": f"https://polymarket.com/market/{m.get('slug')}" if m.get("slug") else None,
                 "sample_bucket": m.get("sample_bucket"),
+                "collection_policy_version": m.get("collection_policy_version"),
+                "volume_rank_at_fetch": m.get("volume_rank_at_fetch"),
                 "market_type": market_type,
                 "price": round(mid, 4) if mid is not None else None,
                 "spread_cents": round(spread_c, 2) if spread_c is not None else None,
                 "spread_is_missing": spread_c is None,  # one-sided books are themselves a quality signal
                 "spread_missing_reason": spread_reason,
+                "orderbook_available": orderbook_available,
+                "holders_available": bool(m.get("holders_available")),
+                "data_quality_tier": quality_tier,
                 "volume_usd": m.get("volume_usd"),
                 "end_date": m.get("end_date"),
                 "days_to_resolution": d2r,
@@ -479,17 +500,28 @@ def main():
     d2rs = [r["days_to_resolution"] for r in rows if r["days_to_resolution"] is not None]
     hbuckets = Counter(r["horizon_bucket"] for r in rows if r["horizon_bucket"])
     cats = Counter(str(r["category"]) for r in rows)
+    buckets = Counter(str(r["sample_bucket"]) for r in rows)
+    quality = Counter(str(r["data_quality_tier"]) for r in rows)
     missing_spread_reasons = Counter(
         r["spread_missing_reason"] for r in rows if r["spread_is_missing"]
     )
+    policies = sorted({str(r["collection_policy_version"]) for r in rows})
+    missing_spread_rate = sum(r["spread_is_missing"] for r in rows) / n if n else 0.0
     print("\nDiagnostics")
+    print(f"  Collection policy:          {', '.join(policies)}")
     print(f"  Rows scored:                {n}")
     print(f"  Missing price:              {sum(r['price'] is None for r in rows)}")
-    print(f"  Missing spread:             {sum(r['spread_is_missing'] for r in rows)}")
+    print(f"  Missing spread:             {sum(r['spread_is_missing'] for r in rows)} ({missing_spread_rate:.0%})")
     for reason, count in sorted(missing_spread_reasons.items()):
         print(f"    {reason:<25} {count}")
     print(f"  Concentration placeholders: {sum(r['concentration_is_placeholder'] for r in rows)}")
     print(f"  Category = 'Other':         {sum(r['category'] == 'Other' for r in rows)}")
+    print("  Sample buckets:")
+    for bucket, cnt in buckets.most_common():
+        print(f"    {bucket:<18} {cnt}")
+    print("  Data-quality tiers:")
+    for tier in ("high", "medium", "low"):
+        print(f"    {tier:<8} {quality.get(tier, 0)}")
     if n:
         print(f"  Trust score avg:            {sum(trusts)/n:.1f}")
         print(f"  Trust score min/max:        {min(trusts)} / {max(trusts)}")
@@ -517,6 +549,10 @@ def main():
             print("  WARNING: >70% of markets resolve after 180 days — validation will be slow")
         if cats and cats.most_common(1)[0][1] / n > 0.50:
             print(f"  WARNING: >50% of markets from one category ({cats.most_common(1)[0][0]})")
+        # Thin-tail watch for the wide net: surface it, don't shrink the sample.
+        if missing_spread_rate > 0.40:
+            print(f"  WARNING: missing-spread rate {missing_spread_rate:.0%} > 40% — "
+                  "preserve & stratify by data_quality_tier, do not shrink the sample")
 
     rows.sort(key=lambda r: r["composite_trust_score"], reverse=True)
     print(f"\n{'Trust':>5}  {'Liq':>3} {'Con':>3} {'Res':>3} {'Cal':>3}  Question")

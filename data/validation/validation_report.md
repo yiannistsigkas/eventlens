@@ -1,6 +1,6 @@
 # EventLens Validation Report
 
-Generated: `2026-06-13T11:20:46Z`
+Generated: `2026-06-13T11:51:43Z`
 
 - Brier rows: 0
 - Eligible Brier rows: 0
@@ -10,6 +10,7 @@ Generated: `2026-06-13T11:20:46Z`
 - Mean Brier: N/A
 - Trust vs Brier correlation: N/A (n=0)
 - Trust vs Brier excluding missing spreads: N/A (n=0)
+- Trust vs Brier high-data-quality only: N/A (n=0)
 
 Primary statistics use the latest eligible snapshot observed at least 24 hours before close/resolution (pre-registered in METHODOLOGY.md). Markets with only same-day snapshots appear in the short-horizon descriptive section, not the headline.
 
@@ -36,6 +37,16 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 ## Market Types
 
 | Market type | Mean Brier | n |
+| --- | --- | --- |
+
+## Data-Quality Tiers
+
+| Data-quality tier | Mean Brier | n |
+| --- | --- | --- |
+
+## Collection Buckets
+
+| Collection bucket | Mean Brier | n |
 | --- | --- | --- |
 
 ## Short-Horizon Descriptive (excluded from primary)

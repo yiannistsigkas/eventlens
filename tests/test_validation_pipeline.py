@@ -81,6 +81,16 @@ class ScoreMetadataTests(unittest.TestCase):
             "sports_prop",
         )
 
+    def test_data_quality_tier_levels(self):
+        # full two-sided book + real holders -> high
+        self.assertEqual(score_markets.data_quality_tier(True, False, False), "high")
+        # priced but holder data is a placeholder -> medium
+        self.assertEqual(score_markets.data_quality_tier(True, False, True), "medium")
+        # one-sided book (missing spread) -> low, regardless of holders
+        self.assertEqual(score_markets.data_quality_tier(True, True, False), "low")
+        # no usable book -> low
+        self.assertEqual(score_markets.data_quality_tier(False, False, False), "low")
+
     def test_spread_missing_reason_distinguishes_book_states(self):
         two_sided = {
             "bids": [{"price": "0.40", "size": "10"}],
@@ -132,6 +142,22 @@ class FetchFilterTests(unittest.TestCase):
                 {"clobTokenIds": '["a", "b"]', "endDate": "2099-01-01T00:00:00Z"}
             )
         )
+
+    def test_collection_policy_and_bucket_targets(self):
+        # widened, stratified breadth; a medium-horizon bucket exists
+        self.assertEqual(fetch_polymarket_markets.COLLECTION_POLICY_VERSION, "v0.2-wide-300")
+        targets = dict(fetch_polymarket_markets.BUCKET_TARGETS)
+        self.assertIn("medium_horizon", targets)
+        self.assertEqual(sum(targets.values()), 300)
+
+    def test_slim_metadata_and_rank_shape(self):
+        slim = fetch_polymarket_markets.slim_metadata(
+            {"id": 7, "question": "Q?", "endDate": "2099-01-01T00:00:00Z",
+             "volumeNum": 1000, "outcomes": '["Yes", "No"]'}
+        )
+        self.assertEqual(slim["market_id"], "7")
+        self.assertEqual(slim["volume_usd"], 1000.0)
+        self.assertEqual(slim["outcome_labels"], ["Yes", "No"])
 
 
 class FreshnessTests(unittest.TestCase):

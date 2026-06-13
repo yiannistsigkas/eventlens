@@ -2,7 +2,7 @@
 
 ## Setup
     pip install requests
-    mkdir -p data/raw data/processed data/debug data/validation scripts
+    mkdir -p data/raw data/processed data/debug data/validation data/metadata_archive scripts
 
 ## Run (daily, manually or via cron)
     python scripts/fetch_polymarket_markets.py

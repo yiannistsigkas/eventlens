@@ -177,6 +177,7 @@ def build_report(rows):
     eligible_rows = [row for row in rows if valid_analysis_row(row)]
     primary_rows = primary_rows_24h_buffer(eligible_rows)
     no_missing_spread = [row for row in primary_rows if row.get("spread_is_missing") is False]
+    high_quality = [row for row in primary_rows if row.get("data_quality_tier") == "high"]
 
     # Markets with eligible rows but no snapshot >=24h before close: excluded
     # from the headline, reported as short-horizon descriptive evidence only.
@@ -205,8 +206,11 @@ def build_report(rows):
         "horizon_buckets": grouped_summary(primary_rows, "horizon_bucket"),
         "categories": grouped_summary(primary_rows, "category"),
         "market_types": grouped_summary(primary_rows, "market_type"),
+        "data_quality_tiers": grouped_summary(primary_rows, "data_quality_tier"),
+        "collection_buckets": grouped_summary(primary_rows, "sample_bucket"),
         "trust_vs_brier": pearson(primary_rows),
         "trust_vs_brier_excluding_missing_spread": pearson(no_missing_spread),
+        "trust_vs_brier_high_data_quality_only": pearson(high_quality),
         "by_score_version": score_version_summary(eligible_rows),
     }
 
@@ -227,6 +231,7 @@ def markdown_table(headers, rows):
 def render_markdown(report):
     correlation = report["trust_vs_brier"]
     correlation_no_spread = report["trust_vs_brier_excluding_missing_spread"]
+    correlation_high_quality = report["trust_vs_brier_high_data_quality_only"]
     sections = [
         "# EventLens Validation Report",
         "",
@@ -242,6 +247,10 @@ def render_markdown(report):
         (
             "- Trust vs Brier excluding missing spreads: "
             f"{fmt_number(correlation_no_spread['correlation'])} (n={correlation_no_spread['n']})"
+        ),
+        (
+            "- Trust vs Brier high-data-quality only: "
+            f"{fmt_number(correlation_high_quality['correlation'])} (n={correlation_high_quality['n']})"
         ),
         "",
         "Primary statistics use the latest eligible snapshot observed at least "
@@ -264,6 +273,8 @@ def render_markdown(report):
         ("Horizon Buckets", "Horizon bucket", "horizon_buckets"),
         ("Categories", "Category", "categories"),
         ("Market Types", "Market type", "market_types"),
+        ("Data-Quality Tiers", "Data-quality tier", "data_quality_tiers"),
+        ("Collection Buckets", "Collection bucket", "collection_buckets"),
     ):
         sections.extend(
             [

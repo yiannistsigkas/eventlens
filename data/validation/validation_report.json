@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T11:20:46Z",
+  "generated_at": "2026-06-13T11:51:43Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
   "n_brier_rows": 0,
@@ -47,11 +47,17 @@
   "horizon_buckets": [],
   "categories": [],
   "market_types": [],
+  "data_quality_tiers": [],
+  "collection_buckets": [],
   "trust_vs_brier": {
     "correlation": null,
     "n": 0
   },
   "trust_vs_brier_excluding_missing_spread": {
+    "correlation": null,
+    "n": 0
+  },
+  "trust_vs_brier_high_data_quality_only": {
     "correlation": null,
     "n": 0
   },

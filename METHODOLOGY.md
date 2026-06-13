@@ -190,11 +190,54 @@ Any future inclusion of the LLM score in the composite requires a new
 
 ---
 
+## Collection breadth change (2026-06-13)
+
+Beginning 2026-06-13, while `brier_rows = 0`, EventLens widened the daily
+scored universe from ~100 to ~300 active markets. This affects *which* markets
+are observed; it does **not** change the scoring formula, `score_version`, the
+validation eligibility rule, or the primary snapshot rule.
+
+Rationale: the validation timeline is gated by unique resolved-market count,
+not snapshot count, and unobserved snapshots are permanently unrecoverable.
+A wider, fast-resolving sample accelerates the only real bottleneck.
+
+This is recorded as a **collection-policy change**, separate from scoring:
+
+- `collection_policy_version` answers *why a market was observed* (breadth);
+  `score_version` answers *how it was scored* (the frozen formula). The two
+  move independently. The current values are
+  `collection_policy_version = "v0.2-wide-300"` and `score_version = v0.2`.
+- The scored sample is stratified (~300 after dedup): `top_volume` 75,
+  `short_horizon` 75, `medium_horizon` 50, `low_liquidity` 50,
+  `category_diverse` 50. Buckets are tilted toward fast-resolving markets;
+  `low_liquidity` deliberately retains the thin tail the score must flag.
+- A wider net pulls in more thin, barely-traded markets. Every row therefore
+  carries data-quality metadata so validation can stratify rather than let the
+  thin tail dominate: `data_quality_tier` (high/medium/low),
+  `volume_rank_at_fetch`, `sample_bucket`, `spread_is_missing`,
+  `spread_missing_reason`, `concentration_is_placeholder`,
+  `orderbook_available`, `holders_available`.
+- A cheap Tier-1 metadata archive (`data/metadata_archive/`) records slim
+  book-free metadata for the active-market universe each run (top ~1200 by
+  volume), preserving knowledge of the daily universe and supplying the global
+  `volume_rank_at_fetch`. Scored markets below that depth carry a null rank,
+  which itself reads as "deep volume tail".
+
+If missing-spread or placeholder rates rise with the wider net, the response
+is to preserve and stratify the data, not to shrink the sample — thin markets
+are part of the thesis. Validation can be run on all rows, on high-data-quality
+rows only, excluding missing-spread rows, and by collection bucket / volume
+rank / horizon.
+
+---
+
 ## Current frozen version
 
 The current frozen methodology is:
 
     score_version = v0.2
+    collection_policy_version = v0.2-wide-300
 
-This document was committed before any non-empty Brier validation results
-existed.
+The scoring formula was frozen, and this document first committed, before any
+non-empty Brier validation results existed. The 2026-06-13 collection-breadth
+change widened observation only; it left the scoring formula untouched.
