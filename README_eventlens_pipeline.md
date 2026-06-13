@@ -19,6 +19,18 @@ Install its macOS LaunchAgent (daily at 21:05 local time):
 
     scripts/install_freshness_launchagent.sh
 
+## Monitoring dashboard (read-only)
+A zero-dependency static page that reads the pipeline's JSON outputs — run
+health, the live scored markets, the frozen methodology (version strings read
+from output, never hardcoded), and an honest empty validation state that fills
+in as Brier rows arrive. It is monitoring + credibility, not a product: no
+picks, no adjustable weights, no accounts.
+
+    python3 dashboard/serve.py          # serves the repo root, opens the page
+
+The in-dashboard Run Health tab does not replace the standalone freshness
+guard above — the guard fires whether or not the dashboard is open.
+
 ## Sampling (v0.2 — sample for validation, not just volume)
 Top-volume-only sampling yields liquid but slow-resolving markets that starve
 the Brier validation loop. The fetcher builds a stratified sample instead:

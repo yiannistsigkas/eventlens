@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EventLens Monitoring Dashboard v0.2</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --line:#2a2f3a;
+    --ink:#e6e9ef; --mut:#9aa3b2; --dim:#6b7280;
+    --accent:#3b82f6; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+  header{padding:20px 24px 0;border-bottom:1px solid var(--line)}
+  h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.2px}
+  .sub{color:var(--dim);font-size:12px;margin:4px 0 16px}
+  .sub b{color:var(--mut);font-weight:600}
+  nav{display:flex;gap:2px}
+  nav button{background:none;border:none;color:var(--mut);font:inherit;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;font-size:13px}
+  nav button:hover{color:var(--ink)}
+  nav button.active{color:var(--ink);border-bottom-color:var(--accent)}
+  main{padding:20px 24px;max-width:1180px}
+  .banner{padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:13px;display:flex;gap:10px;align-items:center}
+  .banner.good{background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.35)}
+  .banner.warn{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35)}
+  .banner.bad{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.45)}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .card .k{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .card .v{font-size:22px;font-weight:650;margin-top:6px;font-variant-numeric:tabular-nums}
+  .card .v small{font-size:12px;color:var(--dim);font-weight:500}
+  .card.flag .v{color:var(--warn)} .card.alert .v{color:var(--bad)}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);margin:26px 0 10px;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--mut);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--bg)}
+  th.num,td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  tbody tr:hover{background:var(--panel)}
+  td.q{white-space:normal;max-width:380px;color:var(--ink)}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;border:1px solid var(--line);color:var(--mut)}
+  .pill.high{color:var(--good);border-color:rgba(34,197,94,.4)}
+  .pill.medium{color:var(--warn);border-color:rgba(245,158,11,.4)}
+  .pill.low{color:var(--bad);border-color:rgba(239,68,68,.4)}
+  .trust{font-family:var(--mono);font-weight:650}
+  .ctrls{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .ctrls label{color:var(--mut);font-size:12px;margin-right:6px}
+  select,input[type=search]{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:6px 9px;font:inherit;font-size:12.5px}
+  .tablewrap{max-height:62vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  .meth{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;max-width:760px}
+  .meth dl{display:grid;grid-template-columns:230px 1fr;gap:8px 16px;margin:0}
+  .meth dt{color:var(--mut)} .meth dd{margin:0;font-family:var(--mono);font-size:12.5px}
+  .meth .note{color:var(--dim);font-size:12px;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;font-family:var(--sans)}
+  .empty{background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:28px;text-align:center;color:var(--mut)}
+  .empty .big{font-size:15px;color:var(--ink);margin-bottom:14px}
+  .ladder{display:inline-block;text-align:left;font-size:13px;line-height:1.9;margin-top:6px}
+  .ladder .done{color:var(--good)} .ladder .now{color:var(--accent);font-weight:600}
+  .muted{color:var(--dim)}
+  .err{color:var(--bad);font-family:var(--mono);font-size:13px}
+  .hidden{display:none}
+  footer{color:var(--dim);font-size:11px;padding:18px 24px;border-top:1px solid var(--line);margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>EventLens — Monitoring Dashboard <span class="muted" style="font-weight:400">v0.2</span></h1>
+  <div class="sub">Read-only · <b>monitoring &amp; methodology</b> · not a product. The proof is the validation loop, not this page.</div>
+  <nav id="nav">
+    <button data-tab="health" class="active">Run Health</button>
+    <button data-tab="markets">Live Markets</button>
+    <button data-tab="methodology">Methodology</button>
+    <button data-tab="validation">Validation</button>
+  </nav>
+</header>
+<main>
+  <div id="freshness"></div>
+  <section id="tab-health"></section>
+  <section id="tab-markets" class="hidden"></section>
+  <section id="tab-methodology" class="hidden"></section>
+  <section id="tab-validation" class="hidden"></section>
+</main>
+<footer id="foot">Loading pipeline outputs…</footer>
+
+<script>
+const PATHS = {
+  scored: "../data/scored_markets.json",
+  report: "../data/validation/validation_report.json",
+};
+const S = { scored:null, report:null, rows:[], sort:{key:"composite_trust_score",dir:-1} };
+
+const $ = s => document.querySelector(s);
+const num = (x,d=1) => (x==null||Number.isNaN(x)) ? "—" : Number(x).toFixed(d);
+const pct = x => x==null ? "—" : (x*100).toFixed(0)+"%";
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function mean(a){return a.length? a.reduce((x,y)=>x+y,0)/a.length : null;}
+function stdev(a){ if(a.length<2) return null; const m=mean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1)); }
+function hoursSince(iso){ const t=Date.parse(iso); return Number.isNaN(t)? null : (Date.now()-t)/36e5; }
+
+async function fetchJSON(p){
+  const r = await fetch(p, {cache:"no-store"});
+  if(!r.ok) throw new Error(p+" → HTTP "+r.status);
+  return r.json();
+}
+
+async function load(){
+  try{
+    S.scored = await fetchJSON(PATHS.scored);
+  }catch(e){
+    $("#tab-health").innerHTML = `<div class="banner bad"><span class="dot bad"></span>
+      Could not load <code>${esc(PATHS.scored)}</code> — ${esc(e.message)}.
+      Serve from the repo root: <code>python3 dashboard/serve.py</code></div>`;
+    $("#foot").textContent = "Failed to load scored_markets.json";
+    return;
+  }
+  try{ S.report = await fetchJSON(PATHS.report); }catch(e){ S.report = null; }
+  S.rows = (S.scored.markets||[]).slice();
+  renderFreshness(); renderHealth(); renderMarkets(); renderMethodology(); renderValidation();
+  const gen = S.scored.generated_at;
+  $("#foot").innerHTML = `Source: <code>${esc(PATHS.scored)}</code> + <code>${esc(PATHS.report||"")}</code>`
+    + ` · generated <code>${esc(gen)}</code> · ${S.rows.length} scored rows · dashboard reads pipeline output, computes nothing it can hide.`;
+}
+
+/* ---- freshness guard (in-dashboard mirror of the standalone monitor) ---- */
+function renderFreshness(){
+  const age = hoursSince(S.scored.generated_at);
+  let cls="good", msg;
+  if(age==null){ cls="warn"; msg="Latest run timestamp unreadable."; }
+  else if(age>36){ cls="bad"; msg=`STALE — last scored run ${(age/24).toFixed(1)} days ago. The scheduler may be dead.`; }
+  else if(age>26){ cls="warn"; msg=`Last scored run ${age.toFixed(0)}h ago — a daily run may have been missed.`; }
+  else { msg=`Fresh — last scored run ${age.toFixed(0)}h ago.`; }
+  $("#freshness").innerHTML = `<div class="banner ${cls}"><span class="dot ${cls}"></span>${esc(msg)}
+    <span class="muted" style="margin-left:auto">This banner mirrors the standalone freshness guard; it is not a substitute for it.</span></div>`;
+}
+
+/* ---- Run Health ---- */
+function renderHealth(){
+  const r = S.rows;
+  const trusts = r.map(x=>x.composite_trust_score).filter(x=>x!=null);
+  const ress  = r.map(x=>x.resolution_clarity_score).filter(x=>x!=null);
+  const elig  = r.filter(x=>x.validation_eligible).length;
+  const miss  = r.filter(x=>x.spread_is_missing).length;
+  const q = {high:0,medium:0,low:0};
+  r.forEach(x=>{ if(q[x.data_quality_tier]!=null) q[x.data_quality_tier]++; });
+  const brier   = S.report ? S.report.n_brier_rows : null;
+  const resolved= S.report ? S.report.n_unique_resolved_markets : null;
+  const policies = [...new Set(r.map(x=>x.collection_policy_version).filter(Boolean))].join(", ") || "—";
+  const card = (k,v,sub="",cls="") => `<div class="card ${cls}"><div class="k">${k}</div>
+    <div class="v">${v}${sub?` <small>${sub}</small>`:""}</div></div>`;
+  const missCls = (miss/r.length)>0.40 ? "alert" : (miss/r.length)>0.25 ? "flag" : "";
+  $("#tab-health").innerHTML = `
+    <div class="grid">
+      ${card("Last generated", shortTime(S.scored.generated_at))}
+      ${card("Rows scored", r.length)}
+      ${card("Validation-eligible", elig, "/ "+r.length)}
+      ${card("Brier rows", brier==null?"—":brier, brier===0?"(none yet — correct)":"")}
+      ${card("Unique resolved", resolved==null?"—":resolved, "→ 30")}
+      ${card("Missing spread", miss, pct(miss/r.length), missCls)}
+      ${card("Trust stdev", num(stdev(trusts)))}
+      ${card("Resolution stdev", num(stdev(ress)))}
+      ${card("Score version", S.scored.score_version||"—")}
+      ${card("Collection policy", policies)}
+    </div>
+    <h2>Data-quality split</h2>
+    <div class="grid">
+      ${card("High", q.high, pct(q.high/r.length),"")}
+      ${card("Medium", q.medium, pct(q.medium/r.length),"")}
+      ${card("Low (thin tail)", q.low, pct(q.low/r.length), q.low/r.length>0.4?"flag":"")}
+    </div>
+    <h2>Sample buckets</h2>
+    <div class="grid">${bucketCards(r)}</div>`;
+}
+function bucketCards(r){
+  const b={}; r.forEach(x=>{ b[x.sample_bucket]=(b[x.sample_bucket]||0)+1; });
+  return Object.entries(b).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<div class="card"><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`).join("");
+}
+function shortTime(iso){ return iso? iso.replace("T"," ").replace("Z"," UTC") : "—"; }
+
+/* ---- Live Markets (sortable; light filters per review synthesis) ---- */
+function renderMarkets(){
+  $("#tab-markets").innerHTML = `
+    <div class="ctrls">
+      <span><label>Data quality</label>
+        <select id="f-quality"><option value="">all</option><option>high</option><option>medium</option><option>low</option></select></span>
+      <span><label>Missing spread</label>
+        <select id="f-spread"><option value="">all</option><option value="yes">yes</option><option value="no">no</option></select></span>
+      <span><label>Search</label><input id="f-q" type="search" placeholder="question…"></span>
+      <span class="muted" id="m-count"></span>
+    </div>
+    <div class="tablewrap"><table id="m-table"></table></div>
+    <p class="muted" style="font-size:11.5px;margin-top:8px">Sortable inspection table for spotting anomalies (clustered scores, odd categories, the missing-spread tail). Not a product surface — no picks, no actions.</p>`;
+  ["f-quality","f-spread","f-q"].forEach(id=>$("#"+id).addEventListener("input",drawTable));
+  drawTable();
+}
+const COLS = [
+  ["composite_trust_score","Trust","num"],["price","Price","num"],["question","Question","q"],
+  ["category","Category",""],["horizon_bucket","Horizon",""],["sample_bucket","Bucket",""],
+  ["data_quality_tier","Quality",""],["spread_is_missing","NoSpr",""],
+  ["liquidity_score","Liq","num"],["concentration_score","Con","num"],
+  ["resolution_clarity_score","Res","num"],["category_calibration_score","Cal","num"],
+];
+function drawTable(){
+  const fq=$("#f-quality").value, fs=$("#f-spread").value, ft=$("#f-q").value.toLowerCase();
+  let rows = S.rows.filter(r=>{
+    if(fq && r.data_quality_tier!==fq) return false;
+    if(fs==="yes" && !r.spread_is_missing) return false;
+    if(fs==="no" && r.spread_is_missing) return false;
+    if(ft && !String(r.question||"").toLowerCase().includes(ft)) return false;
+    return true;
+  });
+  const {key,dir}=S.sort;
+  rows.sort((a,b)=>{ let x=a[key],y=b[key];
+    if(typeof x==="boolean"){x=x?1:0;y=y?1:0;}
+    if(x==null)return 1; if(y==null)return -1;
+    if(typeof x==="number")return (x-y)*dir;
+    return String(x).localeCompare(String(y))*dir; });
+  const head = "<thead><tr>"+COLS.map(([k,l,c])=>{
+    const arrow = S.sort.key===k ? (S.sort.dir<0?" ▾":" ▴") : "";
+    return `<th class="${c}" data-k="${k}">${l}${arrow}</th>`; }).join("")+"</tr></thead>";
+  const body = "<tbody>"+rows.map(r=>"<tr>"+COLS.map(([k,l,c])=>{
+    let v=r[k];
+    if(k==="composite_trust_score") return `<td class="num trust">${v}</td>`;
+    if(k==="price") return `<td class="num">${v==null?"—":Number(v).toFixed(3)}</td>`;
+    if(k==="spread_is_missing") return `<td>${v?'<span class="pill low">yes</span>':'<span class="muted">no</span>'}</td>`;
+    if(k==="data_quality_tier") return `<td><span class="pill ${esc(v)}">${esc(v)}</span></td>`;
+    if(c==="q"){ const url=r.url; const t=esc(v);
+      return `<td class="q">${url?`<a href="${esc(url)}" target="_blank" rel="noopener" style="color:inherit">${t}</a>`:t}</td>`; }
+    if(c==="num") return `<td class="num">${v==null?"—":v}</td>`;
+    return `<td>${esc(v)}</td>`;
+  }).join("")+"</tr>").join("")+"</tbody>";
+  $("#m-table").innerHTML = head+body;
+  $("#m-count").textContent = `${rows.length} of ${S.rows.length} rows`;
+  $("#m-table").querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.k; S.sort = S.sort.key===k ? {key:k,dir:-S.sort.dir} : {key:k,dir:-1}; drawTable();
+  }));
+}
+
+/* ---- Methodology (version strings read FROM pipeline output, never hardcoded) ---- */
+function renderMethodology(){
+  const sv = S.scored.score_version || "—";
+  const cp = [...new Set(S.rows.map(x=>x.collection_policy_version).filter(Boolean))].join(", ") || "—";
+  const rule = S.report ? S.report.primary_snapshot_rule : "—";
+  const brier = S.report ? S.report.n_brier_rows : "—";
+  const resolved = S.report ? S.report.n_unique_resolved_markets : "—";
+  $("#tab-methodology").innerHTML = `
+    <div class="meth">
+      <dl>
+        <dt>Score version</dt><dd>${esc(sv)}</dd>
+        <dt>Collection policy version</dt><dd>${esc(cp)}</dd>
+        <dt>Primary snapshot rule</dt><dd>${esc(rule)}</dd>
+        <dt>Brier rows</dt><dd>${esc(brier)}</dd>
+        <dt>Unique resolved markets</dt><dd>${esc(resolved)}</dd>
+        <dt>Composite weights (${esc(sv)})</dt><dd>liquidity 30 · concentration 25 · resolution 25 · calibration 20</dd>
+      </dl>
+      <div class="note">
+        Versions and counts above are read live from <code>scored_markets.json</code> and
+        <code>validation_report.json</code> — the interface displays what produced the scores and
+        cannot drift from it. Scores are ex-ante: outcomes never enter scoring inputs. The scoring
+        formula is frozen; widening collection breadth bumps <i>collection_policy_version</i>, never
+        <i>score_version</i>. Full rules: <code>METHODOLOGY.md</code>.
+      </div>
+    </div>`;
+}
+
+/* ---- Validation (honest empty state; grows as Brier rows arrive) ---- */
+function renderValidation(){
+  const rep = S.report;
+  const n = rep ? rep.n_analysis_rows : 0;
+  const resolved = rep ? rep.n_unique_resolved_markets : 0;
+  if(!rep || n < 2){
+    $("#tab-validation").innerHTML = `
+      <div class="empty">
+        <div class="big">No resolved markets yet — nothing to validate.</div>
+        <div>The trust-vs-Brier chart appears once ≥2 primary rows exist. Current unique resolved: <b>${resolved}</b>.</div>
+        <div class="ladder">
+          <div class="now">▸ now · collecting ex-ante snapshots (Brier rows = ${rep?rep.n_brier_rows:0})</div>
+          <div>▸ ≥2 resolved · first trust-vs-Brier scatter</div>
+          <div>▸ ≥30 resolved · first descriptive table (short-horizon evidence)</div>
+          <div>▸ ≥100 resolved · preliminary validation</div>
+          <div>▸ ≥300 across ≥4 categories · cross-category validation</div>
+        </div>
+        <div class="muted" style="margin-top:18px">An empty chart here is the correct state — the system does not fake evidence before outcomes exist.</div>
+      </div>`;
+    return;
+  }
+  const c = rep.trust_vs_brier, cns = rep.trust_vs_brier_excluding_missing_spread,
+        chq = rep.trust_vs_brier_high_data_quality_only;
+  const corr = (l,o)=>`<div class="card"><div class="k">${l}</div><div class="v">${num(o&&o.correlation,3)} <small>n=${o?o.n:0}</small></div></div>`;
+  const tb = (rep.trust_buckets||[]).map(b=>`<tr><td>${esc(b.bucket)}</td><td class="num">${num(b.mean_brier,4)}</td><td class="num">${b.n}</td></tr>`).join("");
+  $("#tab-validation").innerHTML = `
+    <div class="grid">
+      <div class="card"><div class="k">Primary rows</div><div class="v">${n}</div></div>
+      <div class="card"><div class="k">Mean Brier</div><div class="v">${num(rep.mean_brier,4)}</div></div>
+      ${corr("Trust vs Brier", c)}
+      ${corr("Excl. missing spread", cns)}
+      ${corr("High data-quality only", chq)}
+    </div>
+    <h2>Trust buckets (expected: lower trust → higher Brier)</h2>
+    <table><thead><tr><th>Trust bucket</th><th class="num">Mean Brier</th><th class="num">n</th></tr></thead><tbody>${tb}</tbody></table>
+    <p class="muted" style="margin-top:10px">Aggregates from <code>validation_report.json</code>, primary 24h-prior snapshot per resolved market.</p>`;
+}
+
+/* ---- tab switching ---- */
+$("#nav").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-tab]"); if(!b) return;
+  $("#nav").querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));
+  ["health","markets","methodology","validation"].forEach(t=>
+    $("#tab-"+t).classList.toggle("hidden", t!==b.dataset.tab));
+});
+
+load();
+</script>
+</body>
+</html>
