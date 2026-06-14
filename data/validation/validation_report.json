@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-06-14T15:21:01Z",
+  "generated_at": "2026-06-14T16:00:42Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
-  "n_brier_rows": 316,
-  "n_eligible_brier_rows": 316,
-  "n_unique_resolved_markets": 267,
+  "n_brier_rows": 322,
+  "n_eligible_brier_rows": 322,
+  "n_unique_resolved_markets": 273,
   "n_analysis_rows": 3,
-  "n_markets_excluded_no_24h_snapshot": 264,
+  "n_markets_excluded_no_24h_snapshot": 270,
   "short_horizon_descriptive": {
     "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
-    "n": 264,
-    "mean_brier": 0.09315294223484849,
+    "n": 270,
+    "mean_brier": 0.09108289074074075,
     "trust_vs_brier": {
-      "correlation": -0.24188577765474925,
-      "n": 264
+      "correlation": -0.2500032189235378,
+      "n": 270
     }
   },
   "mean_brier": 0.07815308333333332,
@@ -138,12 +138,12 @@
     },
     {
       "score_version": "v0.2",
-      "mean_brier": 0.09297945599250937,
+      "mean_brier": 0.0909359652014652,
       "trust_vs_brier": {
-        "correlation": -0.24734097247375747,
-        "n": 267
+        "correlation": -0.2550821437922792,
+        "n": 273
       },
-      "n": 267
+      "n": 273
     }
   ]
 }
