@@ -233,6 +233,28 @@ class ResolutionTests(unittest.TestCase):
         )
         self.assertIsNone(record)
 
+    def test_fetch_markets_by_id_requests_closed_markets(self):
+        # Regression: Gamma's /markets hides closed markets unless closed=true is
+        # sent. Without it the tracker can never see a resolution (silent 0 forever).
+        captured = {}
+
+        class FakeResp:
+            def raise_for_status(self): pass
+            def json(self): return []
+
+        def fake_get(url, params=None, timeout=None):
+            captured["params"] = params
+            return FakeResp()
+
+        orig = resolution_tracker.requests.get
+        resolution_tracker.requests.get = fake_get
+        try:
+            resolution_tracker.fetch_markets_by_id(["111", "222"])
+        finally:
+            resolution_tracker.requests.get = orig
+        self.assertIn(("closed", "true"), captured["params"])
+        self.assertIn(("id", "111"), captured["params"])
+
 
 class ValidationReportTests(unittest.TestCase):
     def setUp(self):

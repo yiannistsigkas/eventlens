@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .claude/
+
+# stray gh CLI download (installed to ~/.nvm/.../bin instead)
+gh_*_macOS_*/
+gh_*_macOS_*.zip

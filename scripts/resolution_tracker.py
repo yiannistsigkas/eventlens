@@ -93,11 +93,19 @@ def load_recorded_resolutions():
 
 
 def fetch_markets_by_id(ids):
+    """Fetch tracked markets that have CLOSED. Gamma's /markets endpoint
+    excludes closed markets unless closed=true is passed — so without it a
+    market silently disappears from the query the moment it resolves, and the
+    tracker would report 0 resolutions forever. We only act on closed markets
+    (a resolution requires closed + collapsed prices), so this is also the
+    minimal query: still-open markets correctly return nothing and stay pending."""
     out = []
     for i in range(0, len(ids), BATCH_SIZE):
         batch = ids[i:i + BATCH_SIZE]
         resp = requests.get(
-            f"{GAMMA_API}/markets", params=[("id", mid) for mid in batch], timeout=TIMEOUT_S
+            f"{GAMMA_API}/markets",
+            params=[("id", mid) for mid in batch] + [("closed", "true"), ("limit", BATCH_SIZE)],
+            timeout=TIMEOUT_S,
         )
         resp.raise_for_status()
         data = resp.json()
