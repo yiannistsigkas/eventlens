@@ -246,12 +246,13 @@ class ResolutionTests(unittest.TestCase):
             captured["params"] = params
             return FakeResp()
 
-        orig = resolution_tracker.requests.get
-        resolution_tracker.requests.get = fake_get
+        # Calls now go through the retrying SESSION, not requests.get directly.
+        orig = resolution_tracker.SESSION.get
+        resolution_tracker.SESSION.get = fake_get
         try:
             resolution_tracker.fetch_markets_by_id(["111", "222"])
         finally:
-            resolution_tracker.requests.get = orig
+            resolution_tracker.SESSION.get = orig
         self.assertIn(("closed", "true"), captured["params"])
         self.assertIn(("id", "111"), captured["params"])
 

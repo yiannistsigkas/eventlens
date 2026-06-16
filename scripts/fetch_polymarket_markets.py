@@ -27,6 +27,29 @@ import time
 from datetime import datetime, timedelta, timezone
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
+def make_session():
+    """Session that retries transient failures with exponential backoff.
+    Critically covers DNS/connection errors (connect=...), so a scheduled run
+    firing on wake-from-sleep — before the network stack is ready — retries
+    over ~60s instead of aborting the whole pipeline on the first failure."""
+    session = requests.Session()
+    retry = Retry(
+        total=6, connect=6, read=3, backoff_factor=2,  # ~0,2,4,8,16,32s
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=("GET",),
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+SESSION = make_session()
 
 GAMMA_API = "https://gamma-api.polymarket.com"
 CLOB_API = "https://clob.polymarket.com"
@@ -132,7 +155,7 @@ def gamma_markets(extra_params: dict, limit: int) -> list:
         "include_tag": "true",  # markets no longer carry a top-level category; first tag label fills the role
     }
     params.update(extra_params)
-    resp = requests.get(f"{GAMMA_API}/markets", params=params, timeout=TIMEOUT_S)
+    resp = SESSION.get(f"{GAMMA_API}/markets", params=params, timeout=TIMEOUT_S)
     resp.raise_for_status()
     data = resp.json()
     if isinstance(data, list):
@@ -302,7 +325,7 @@ def build_sample() -> list:
 
 def fetch_orderbook(token_id: str):
     try:
-        resp = requests.get(f"{CLOB_API}/book", params={"token_id": token_id}, timeout=TIMEOUT_S)
+        resp = SESSION.get(f"{CLOB_API}/book", params={"token_id": token_id}, timeout=TIMEOUT_S)
         resp.raise_for_status()
         book = resp.json()
         if not isinstance(book, dict) or ("bids" not in book and "asks" not in book):
@@ -320,7 +343,7 @@ def fetch_orderbook(token_id: str):
 def fetch_top_holders(condition_id: str):
     """Best-effort; scoring falls back to a placeholder if this is unusable."""
     try:
-        resp = requests.get(
+        resp = SESSION.get(
             f"{DATA_API}/holders", params={"market": condition_id, "limit": 10}, timeout=TIMEOUT_S
         )
         resp.raise_for_status()

@@ -20,6 +20,26 @@ import os
 from datetime import datetime, timezone
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
+def make_session():
+    """Retry transient failures (incl. DNS/connection) with backoff, so a
+    network blip does not abort resolution tracking."""
+    session = requests.Session()
+    retry = Retry(
+        total=6, connect=6, read=3, backoff_factor=2,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=("GET",), raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+SESSION = make_session()
 
 GAMMA_API = "https://gamma-api.polymarket.com"
 SNAPSHOT_LOG = os.path.join("data", "processed", "snapshots.jsonl")
@@ -102,7 +122,7 @@ def fetch_markets_by_id(ids):
     out = []
     for i in range(0, len(ids), BATCH_SIZE):
         batch = ids[i:i + BATCH_SIZE]
-        resp = requests.get(
+        resp = SESSION.get(
             f"{GAMMA_API}/markets",
             params=[("id", mid) for mid in batch] + [("closed", "true"), ("limit", BATCH_SIZE)],
             timeout=TIMEOUT_S,

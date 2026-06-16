@@ -8,9 +8,15 @@ operational summary of what changed this run.
 import glob
 import json
 import os
+import socket
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
+
+GAMMA_HOST = "gamma-api.polymarket.com"
+NETWORK_WAIT_TOTAL_S = 300   # launchd may fire this on wake before the network is up
+NETWORK_WAIT_INTERVAL_S = 10
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(ROOT, "scripts")
@@ -81,7 +87,35 @@ def git_backup(n_scored, n_resolved_new, n_brier):
         print(f"  WARNING: backup git step failed ({detail}). Collection data is intact.")
 
 
+def wait_for_network():
+    """Block until the API host resolves, or give up after a cap.
+
+    launchd fires a missed 09:00 job the instant the Mac wakes — often before
+    DNS/Wi-Fi is ready, which is what made the scheduled runs abort. We poll DNS
+    resolution (cheap, no HTTP) and only start once it succeeds. The scripts
+    also retry at the HTTP layer, so this is the first line of defence."""
+    deadline = time.monotonic() + NETWORK_WAIT_TOTAL_S
+    attempt = 0
+    while True:
+        try:
+            socket.getaddrinfo(GAMMA_HOST, 443)
+            if attempt:
+                print(f"  Network ready after {attempt} wait(s).")
+            return True
+        except socket.gaierror:
+            attempt += 1
+            if time.monotonic() >= deadline:
+                print(f"  Network still unavailable after {NETWORK_WAIT_TOTAL_S}s — "
+                      "the scripts will still retry; proceeding.")
+                return False
+            print(f"  Waiting for network (DNS for {GAMMA_HOST} not ready)…", flush=True)
+            time.sleep(NETWORK_WAIT_INTERVAL_S)
+
+
 def main():
+    print("========== Network pre-flight ==========", flush=True)
+    wait_for_network()
+
     before = {
         "raw": raw_snapshots(),
         "scored": count_lines(SNAPSHOT_LOG),
