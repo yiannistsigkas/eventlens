@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-06-23T19:19:31Z",
+  "generated_at": "2026-06-24T10:15:09Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
-  "n_brier_rows": 1308,
-  "n_eligible_brier_rows": 1308,
-  "n_unique_resolved_markets": 1180,
-  "n_analysis_rows": 99,
-  "n_markets_excluded_no_24h_snapshot": 1081,
+  "n_brier_rows": 1343,
+  "n_eligible_brier_rows": 1343,
+  "n_unique_resolved_markets": 1213,
+  "n_analysis_rows": 114,
+  "n_markets_excluded_no_24h_snapshot": 1099,
   "short_horizon_descriptive": {
     "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
-    "n": 1081,
-    "mean_brier": 0.07879738043478261,
+    "n": 1099,
+    "mean_brier": 0.07951376956323931,
     "trust_vs_brier": {
-      "correlation": -0.23755186605114328,
-      "n": 1081
+      "correlation": -0.24390780190938802,
+      "n": 1099
     }
   },
-  "mean_brier": 0.14317115404040404,
+  "mean_brier": 0.149880725877193,
   "trust_buckets": [
     {
       "bucket": "0-40",
-      "mean_brier": 0.17696748529411765,
-      "n": 17
+      "mean_brier": 0.20416563793103448,
+      "n": 29
     },
     {
       "bucket": "40-55",
-      "mean_brier": 0.20416045930232557,
-      "n": 43
+      "mean_brier": 0.1908478695652174,
+      "n": 46
     },
     {
       "bucket": "55-70",
@@ -47,13 +47,13 @@
   "horizon_buckets": [
     {
       "group": "0-7d",
-      "mean_brier": 0.1603488417721519,
-      "n": 79
+      "mean_brier": 0.16752673924731182,
+      "n": 93
     },
     {
       "group": "8-30d",
-      "mean_brier": 0.08812897727272725,
-      "n": 11
+      "mean_brier": 0.08078741666666665,
+      "n": 12
     },
     {
       "group": "31-90d",
@@ -74,8 +74,8 @@
   "categories": [
     {
       "group": "Sports",
-      "mean_brier": 0.20507299999999998,
-      "n": 41
+      "mean_brier": 0.2021509196428571,
+      "n": 56
     },
     {
       "group": "Weather",
@@ -181,13 +181,13 @@
     },
     {
       "group": "sports_prop",
-      "mean_brier": 0.24010306481481483,
-      "n": 27
+      "mean_brier": 0.24026154032258065,
+      "n": 31
     },
     {
       "group": "sports_outcome",
-      "mean_brier": 0.14530153846153845,
-      "n": 13
+      "mean_brier": 0.1598355625,
+      "n": 24
     },
     {
       "group": "crypto_price",
@@ -203,13 +203,13 @@
   "data_quality_tiers": [
     {
       "group": "high",
-      "mean_brier": 0.1393614918032787,
-      "n": 61
+      "mean_brier": 0.13603082575757575,
+      "n": 66
     },
     {
       "group": "low",
-      "mean_brier": 0.1567542583333333,
-      "n": 30
+      "mean_brier": 0.17845256874999998,
+      "n": 40
     },
     {
       "group": "Unknown",
@@ -220,8 +220,8 @@
   "collection_buckets": [
     {
       "group": "low_liquidity",
-      "mean_brier": 0.20728130172413792,
-      "n": 58
+      "mean_brier": 0.20742699652777777,
+      "n": 72
     },
     {
       "group": "short_horizon",
@@ -230,8 +230,8 @@
     },
     {
       "group": "medium_horizon",
-      "mean_brier": 0.03254249999999999,
-      "n": 10
+      "mean_brier": 0.029586840909090903,
+      "n": 11
     },
     {
       "group": "category_diverse",
@@ -250,16 +250,16 @@
     }
   ],
   "trust_vs_brier": {
-    "correlation": -0.3594005276499401,
-    "n": 99
+    "correlation": -0.38880323668615624,
+    "n": 114
   },
   "trust_vs_brier_excluding_missing_spread": {
-    "correlation": -0.2511906017693034,
-    "n": 67
+    "correlation": -0.2521587882203036,
+    "n": 72
   },
   "trust_vs_brier_high_data_quality_only": {
-    "correlation": -0.24673330617412814,
-    "n": 61
+    "correlation": -0.24762703782902276,
+    "n": 66
   },
   "by_score_version": [
     {
@@ -273,12 +273,12 @@
     },
     {
       "score_version": "v0.2",
-      "mean_brier": 0.08373697584745762,
+      "mean_brier": 0.08567828070898599,
       "trust_vs_brier": {
-        "correlation": -0.2727315600510749,
-        "n": 1180
+        "correlation": -0.28976099278535555,
+        "n": 1213
       },
-      "n": 1180
+      "n": 1213
     }
   ]
 }
