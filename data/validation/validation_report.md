@@ -1,12 +1,12 @@
 # EventLens Validation Report
 
-Generated: `2026-07-07T08:41:28Z`
+Generated: `2026-07-07T08:52:24Z`
 
-- Brier rows: 2792
-- Eligible Brier rows: 2792
-- Unique resolved markets: 1800
+- Brier rows: 2799
+- Eligible Brier rows: 2799
+- Unique resolved markets: 1807
 - Primary analysis rows: 328
-- Markets excluded from primary (no 24h-prior snapshot): 1472
+- Markets excluded from primary (no 24h-prior snapshot): 1479
 - Mean Brier: 0.1268
 - Trust vs Brier correlation: -0.5990 (n=328)
 - Trust vs Brier excluding missing spreads: -0.4674 (n=204)
@@ -114,9 +114,9 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 ## Short-Horizon Descriptive (excluded from primary)
 
-- Markets: 1472
-- Mean Brier: 0.0882
-- Trust vs Brier correlation: -0.2571 (n=1472)
+- Markets: 1479
+- Mean Brier: 0.0889
+- Trust vs Brier correlation: -0.2534 (n=1479)
 
 These markets had no eligible snapshot at least 24 hours before close. Descriptive only — not part of the pre-registered primary validation.
 
@@ -125,4 +125,4 @@ These markets had no eligible snapshot at least 24 hours before close. Descripti
 | Score version | Mean Brier | Trust correlation | n |
 | --- | --- | --- | --- |
 | v0.1 | 0.0018 | 0.4252 | 29 |
-| v0.2 | 0.0949 | -0.3401 | 1800 |
+| v0.2 | 0.0954 | -0.3361 | 1807 |
