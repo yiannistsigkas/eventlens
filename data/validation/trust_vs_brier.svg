@@ -454,6 +454,7 @@
 <circle cx="396.0" cy="386.3" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="459.2" cy="400.9" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="443.4" cy="431.7" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="569.8" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="569.8" cy="484.3" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="411.8" cy="439.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="459.2" cy="382.2" r="4" fill="#2563eb" fill-opacity="0.65"/>
@@ -464,6 +465,7 @@
 <circle cx="372.3" cy="426.7" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="396.0" cy="487.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="435.5" cy="425.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="577.7" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="364.4" cy="379.8" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="411.8" cy="368.3" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="372.3" cy="419.8" r="4" fill="#2563eb" fill-opacity="0.65"/>
@@ -493,6 +495,11 @@
 <circle cx="396.0" cy="398.9" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="396.0" cy="358.8" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="633.0" cy="488.8" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="633.0" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="419.7" cy="379.8" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="411.8" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="396.0" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="482.9" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="356.5" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="372.3" cy="396.9" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="601.4" cy="489.7" r="4" fill="#2563eb" fill-opacity="0.65"/>
@@ -501,11 +508,13 @@
 <circle cx="482.9" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="538.2" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="633.0" cy="488.2" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<circle cx="419.7" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="427.6" cy="378.2" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="467.1" cy="382.4" r="4" fill="#2563eb" fill-opacity="0.65"/>
 <circle cx="396.0" cy="377.5" r="4" fill="#2563eb" fill-opacity="0.65"/>
-<line x1="80.0" y1="286.5" x2="870.0" y2="490.0" stroke="#dc2626" stroke-width="3"/>
-<polyline points="238.0,393.4 455.2,410.3 573.8,468.3 692.2,485.6 810.8,490.0" fill="none" stroke="#16a34a" stroke-width="3"/>
+<circle cx="633.0" cy="490.0" r="4" fill="#2563eb" fill-opacity="0.65"/>
+<line x1="80.0" y1="284.9" x2="870.0" y2="490.0" stroke="#dc2626" stroke-width="3"/>
+<polyline points="238.0,393.4 455.2,409.5 573.8,468.6 692.2,485.9 810.8,490.0" fill="none" stroke="#16a34a" stroke-width="3"/>
 <line x1="80" y1="490" x2="870" y2="490" stroke="#111827"/>
 <line x1="80" y1="45" x2="80" y2="490" stroke="#111827"/>
 <text x="475.0" y="542" text-anchor="middle" font-family="sans-serif" font-size="14">Composite trust score</text>
