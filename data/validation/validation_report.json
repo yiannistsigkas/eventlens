@@ -1,42 +1,42 @@
 {
-  "generated_at": "2026-07-19T12:28:05Z",
+  "generated_at": "2026-07-20T11:12:49Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
-  "n_brier_rows": 3985,
-  "n_eligible_brier_rows": 3985,
-  "n_unique_resolved_markets": 2645,
-  "n_analysis_rows": 488,
-  "n_markets_excluded_no_24h_snapshot": 2157,
+  "n_brier_rows": 4308,
+  "n_eligible_brier_rows": 4308,
+  "n_unique_resolved_markets": 2782,
+  "n_analysis_rows": 557,
+  "n_markets_excluded_no_24h_snapshot": 2225,
   "short_horizon_descriptive": {
     "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
-    "n": 2157,
-    "mean_brier": 0.09758531455725544,
+    "n": 2225,
+    "mean_brier": 0.09832722651685392,
     "trust_vs_brier": {
-      "correlation": -0.2280938586039457,
-      "n": 2157
+      "correlation": -0.22782154387532041,
+      "n": 2225
     }
   },
-  "mean_brier": 0.12820475665983608,
+  "mean_brier": 0.125639947486535,
   "trust_buckets": [
     {
       "bucket": "0-40",
-      "mean_brier": 0.21479939935064934,
-      "n": 77
+      "mean_brier": 0.21446319117647059,
+      "n": 85
     },
     {
       "bucket": "40-55",
-      "mean_brier": 0.17889214928909952,
-      "n": 211
+      "mean_brier": 0.16079060137795276,
+      "n": 254
     },
     {
       "bucket": "55-70",
-      "mean_brier": 0.047600275297619045,
-      "n": 168
+      "mean_brier": 0.05320172928176795,
+      "n": 181
     },
     {
       "bucket": "70-85",
-      "mean_brier": 0.009072822580645162,
-      "n": 31
+      "mean_brier": 0.03560370833333334,
+      "n": 36
     },
     {
       "bucket": "85-100",
@@ -47,18 +47,18 @@
   "horizon_buckets": [
     {
       "group": "0-7d",
-      "mean_brier": 0.1578374700413223,
-      "n": 242
+      "mean_brier": 0.16462341003787878,
+      "n": 264
     },
     {
       "group": "8-30d",
-      "mean_brier": 0.09350209193548387,
-      "n": 155
+      "mean_brier": 0.098673321875,
+      "n": 160
     },
     {
       "group": "31-90d",
-      "mean_brier": 0.10378461607142857,
-      "n": 84
+      "mean_brier": 0.07600490079365078,
+      "n": 126
     },
     {
       "group": "90d+",
@@ -74,8 +74,13 @@
   "categories": [
     {
       "group": "Sports",
-      "mean_brier": 0.15491489642857142,
-      "n": 210
+      "mean_brier": 0.15573576168224298,
+      "n": 214
+    },
+    {
+      "group": "Soccer",
+      "mean_brier": 0.06417497413793104,
+      "n": 58
     },
     {
       "group": "Weather",
@@ -83,19 +88,14 @@
       "n": 33
     },
     {
-      "group": "CPI",
-      "mean_brier": 0.06142445238095238,
+      "group": "2026 FIFA World Cup",
+      "mean_brier": 0.05220125,
       "n": 21
     },
     {
-      "group": "2026 FIFA World Cup",
-      "mean_brier": 0.02368015277777778,
-      "n": 18
-    },
-    {
-      "group": "Soccer",
-      "mean_brier": 0.08890891071428572,
-      "n": 14
+      "group": "CPI",
+      "mean_brier": 0.06142445238095238,
+      "n": 21
     },
     {
       "group": "FIFA World Cup",
@@ -106,6 +106,11 @@
       "group": "Macro Indicators",
       "mean_brier": 0.15319729999999998,
       "n": 10
+    },
+    {
+      "group": "Culture",
+      "mean_brier": 0.2076892777777778,
+      "n": 9
     },
     {
       "group": "MLB",
@@ -121,6 +126,11 @@
       "group": "Tech",
       "mean_brier": 0.19485240625,
       "n": 8
+    },
+    {
+      "group": "Formula 1",
+      "mean_brier": 0.17846071428571428,
+      "n": 7
     },
     {
       "group": "Business",
@@ -163,11 +173,6 @@
       "n": 5
     },
     {
-      "group": "Culture",
-      "mean_brier": 0.1904612,
-      "n": 5
-    },
-    {
       "group": "Economic Policy",
       "mean_brier": 5.8499999999999076e-06,
       "n": 5
@@ -175,6 +180,11 @@
     {
       "group": "Economy",
       "mean_brier": 0.0009578000000000008,
+      "n": 5
+    },
+    {
+      "group": "Elon",
+      "mean_brier": 0.218775,
       "n": 5
     },
     {
@@ -190,11 +200,6 @@
     {
       "group": "AI",
       "mean_brier": 0.06901256250000001,
-      "n": 4
-    },
-    {
-      "group": "Formula 1",
-      "mean_brier": 0.22934375,
       "n": 4
     },
     {
@@ -223,6 +228,11 @@
       "n": 3
     },
     {
+      "group": "FIFA",
+      "mean_brier": 0.17228333333333334,
+      "n": 3
+    },
+    {
       "group": "KPIs",
       "mean_brier": 0.26705,
       "n": 3
@@ -236,6 +246,11 @@
       "group": "South Korea",
       "mean_brier": 0.04683408333333334,
       "n": 3
+    },
+    {
+      "group": "BTS",
+      "mean_brier": 0.1972125,
+      "n": 2
     },
     {
       "group": "Cook",
@@ -295,6 +310,11 @@
     {
       "group": "AMZN",
       "mean_brier": 0.238144,
+      "n": 1
+    },
+    {
+      "group": "AQI",
+      "mean_brier": 0.22089999999999999,
       "n": 1
     },
     {
@@ -381,13 +401,13 @@
   "market_types": [
     {
       "group": "news_event",
-      "mean_brier": 0.10439012400793651,
-      "n": 252
+      "mean_brier": 0.1028079873015873,
+      "n": 315
     },
     {
       "group": "sports_outcome",
-      "mean_brier": 0.10922645833333333,
-      "n": 132
+      "mean_brier": 0.11186189154411764,
+      "n": 136
     },
     {
       "group": "sports_prop",
@@ -401,8 +421,8 @@
     },
     {
       "group": "election",
-      "mean_brier": 0.09934495000000002,
-      "n": 5
+      "mean_brier": 0.1486749642857143,
+      "n": 7
     },
     {
       "group": "Unknown",
@@ -413,8 +433,8 @@
   "data_quality_tiers": [
     {
       "group": "high",
-      "mean_brier": 0.11497491666666666,
-      "n": 342
+      "mean_brier": 0.11372007542579075,
+      "n": 411
     },
     {
       "group": "low",
@@ -435,18 +455,18 @@
   "collection_buckets": [
     {
       "group": "low_liquidity",
-      "mean_brier": 0.21563354680851066,
-      "n": 235
+      "mean_brier": 0.21560034881422926,
+      "n": 253
     },
     {
       "group": "medium_horizon",
-      "mean_brier": 0.07043332251908396,
-      "n": 131
+      "mean_brier": 0.061933664772727264,
+      "n": 176
     },
     {
       "group": "top_volume",
-      "mean_brier": 0.02278597777777778,
-      "n": 45
+      "mean_brier": 0.028848117021276598,
+      "n": 47
     },
     {
       "group": "short_horizon",
@@ -455,8 +475,8 @@
     },
     {
       "group": "category_diverse",
-      "mean_brier": 0.006967874999999998,
-      "n": 32
+      "mean_brier": 0.048984569444444445,
+      "n": 36
     },
     {
       "group": "Unknown",
@@ -465,35 +485,35 @@
     }
   ],
   "trust_vs_brier": {
-    "correlation": -0.5079344001933239,
-    "n": 488
+    "correlation": -0.4451070784411463,
+    "n": 557
   },
   "trust_vs_brier_excluding_missing_spread": {
-    "correlation": -0.4238922294284739,
-    "n": 351
+    "correlation": -0.35946425398408227,
+    "n": 420
   },
   "trust_vs_brier_high_data_quality_only": {
-    "correlation": -0.4230018136299047,
-    "n": 342
+    "correlation": -0.35809334717426494,
+    "n": 411
   },
   "by_score_version": [
     {
       "score_version": "v0.1",
-      "mean_brier": 0.002181138888888889,
+      "mean_brier": 0.020808466216216216,
       "trust_vs_brier": {
-        "correlation": 0.4413568355355293,
-        "n": 36
+        "correlation": 0.4091720473158897,
+        "n": 37
       },
-      "n": 36
+      "n": 37
     },
     {
       "score_version": "v0.2",
-      "mean_brier": 0.10299664139886577,
+      "mean_brier": 0.1033531026240115,
       "trust_vs_brier": {
-        "correlation": -0.29371845343477393,
-        "n": 2645
+        "correlation": -0.2865508725124883,
+        "n": 2782
       },
-      "n": 2645
+      "n": 2782
     }
   ]
 }
