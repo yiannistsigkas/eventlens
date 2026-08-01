@@ -1,16 +1,16 @@
 # EventLens Validation Report
 
-Generated: `2026-07-31T11:23:31Z`
+Generated: `2026-08-01T08:50:16Z`
 
-- Brier rows: 5966
-- Eligible Brier rows: 5966
-- Unique resolved markets: 3890
-- Primary analysis rows: 854
-- Markets excluded from primary (no 24h-prior snapshot): 3036
-- Mean Brier: 0.1178
-- Trust vs Brier correlation: -0.3872 (n=854)
-- Trust vs Brier excluding missing spreads: -0.3601 (n=651)
-- Trust vs Brier high-data-quality only: -0.3594 (n=642)
+- Brier rows: 6138
+- Eligible Brier rows: 6138
+- Unique resolved markets: 4002
+- Primary analysis rows: 887
+- Markets excluded from primary (no 24h-prior snapshot): 3115
+- Mean Brier: 0.1218
+- Trust vs Brier correlation: -0.3946 (n=887)
+- Trust vs Brier excluding missing spreads: -0.3727 (n=683)
+- Trust vs Brier high-data-quality only: -0.3723 (n=674)
 
 Primary statistics use the latest eligible snapshot observed at least 24 hours before close/resolution (pre-registered in METHODOLOGY.md). Markets with only same-day snapshots appear in the short-horizon descriptive section, not the headline.
 
@@ -18,19 +18,19 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Trust bucket | Mean Brier | n |
 | --- | --- | --- |
-| 0-40 | 0.2011 | 116 |
-| 40-55 | 0.1395 | 454 |
-| 55-70 | 0.0526 | 238 |
-| 70-85 | 0.0333 | 43 |
+| 0-40 | 0.2046 | 121 |
+| 40-55 | 0.1439 | 477 |
+| 55-70 | 0.0546 | 242 |
+| 70-85 | 0.0328 | 44 |
 | 85-100 | 0.0140 | 3 |
 
 ## Horizon Buckets
 
 | Horizon bucket | Mean Brier | n |
 | --- | --- | --- |
-| 0-7d | 0.1683 | 341 |
-| 31-90d | 0.0620 | 270 |
-| 8-30d | 0.1091 | 228 |
+| 0-7d | 0.1687 | 354 |
+| 31-90d | 0.0625 | 271 |
+| 8-30d | 0.1207 | 247 |
 | 90d+ | 0.1129 | 14 |
 | Unknown | 0.0363 | 1 |
 
@@ -38,7 +38,7 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Category | Mean Brier | n |
 | --- | --- | --- |
-| Sports | 0.1304 | 316 |
+| Sports | 0.1315 | 319 |
 | Soccer | 0.0642 | 58 |
 | Weather | 0.0564 | 41 |
 | Economy | 0.0683 | 30 |
@@ -47,18 +47,18 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | 2026 FIFA World Cup | 0.0522 | 21 |
 | CPI | 0.0614 | 21 |
 | Macro Indicators | 0.1119 | 18 |
-| Culture | 0.2254 | 15 |
+| Culture | 0.2256 | 16 |
 | Politics | 0.0703 | 15 |
-| Tech | 0.1569 | 12 |
+| Tech | 0.1985 | 14 |
+| Trump | 0.1450 | 13 |
 | FIFA World Cup | 0.0305 | 11 |
-| Trump | 0.1474 | 11 |
 | Awards | 0.0883 | 10 |
+| Finance | 0.2563 | 10 |
 | Formula 1 | 0.1839 | 9 |
+| Iran | 0.0436 | 9 |
 | MLB | 0.1860 | 9 |
 | banks | 0.0937 | 9 |
-| Iran | 0.0491 | 8 |
 | NBA | 0.0867 | 8 |
-| Finance | 0.2919 | 7 |
 | Tennis | 0.2704 | 7 |
 | Business | 0.0000 | 6 |
 | Elon | 0.2265 | 6 |
@@ -72,38 +72,42 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | Fed Rates | 0.2421 | 5 |
 | Morgan Stanley | 0.2314 | 5 |
 | NFLX | 0.1321 | 5 |
+| AAPL | 0.1693 | 4 |
 | AI | 0.0690 | 4 |
 | CS2 | 0.2540 | 4 |
 | KPIs | 0.2048 | 4 |
+| MSFT | 0.1780 | 4 |
 | OPEN | 0.2407 | 4 |
 | Privates | 0.2318 | 4 |
+| TSLA | 0.3645 | 4 |
 | ice hockey | 0.0001 | 4 |
+| AMZN | 0.2396 | 3 |
 | Celebrities | 0.1623 | 3 |
 | FIFA | 0.1723 | 3 |
 | Fed | 0.0206 | 3 |
 | GDP | 0.0861 | 3 |
 | IBKR | 0.1672 | 3 |
+| Major League Pickleball | 0.2246 | 3 |
 | Movies | 0.1425 | 3 |
+| NVDA | 0.2093 | 3 |
 | Oil | 0.0000 | 3 |
 | South Korea | 0.0468 | 3 |
 | TV | 0.2088 | 3 |
 | BTS | 0.1972 | 2 |
+| Bitcoin | 0.0055 | 2 |
 | Cook | 0.2391 | 2 |
 | Crypto | 0.2312 | 2 |
 | Crypto Prices | 0.3271 | 2 |
 | Geopolitics | 0.0001 | 2 |
-| MSFT | 0.1183 | 2 |
-| Major League Pickleball | 0.2401 | 2 |
+| Monthly | 0.1783 | 2 |
 | Musk v Altman | 0.2359 | 2 |
 | UFC | 0.1445 | 2 |
 | WFC | 0.2403 | 2 |
 | fraud | 0.1225 | 2 |
 | transit | 0.0009 | 2 |
-| AAPL | 0.0064 | 1 |
-| AMZN | 0.2381 | 1 |
+| ABBV | 0.0010 | 1 |
 | AQI | 0.2209 | 1 |
 | ATP | 0.2704 | 1 |
-| Bitcoin | 0.0000 | 1 |
 | Claude | 0.0361 | 1 |
 | Head coach | 0.1806 | 1 |
 | Hide From New | 0.2256 | 1 |
@@ -114,12 +118,14 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | JNJ | 0.2256 | 1 |
 | LA Mayor | 0.0020 | 1 |
 | M&A | 0.3249 | 1 |
+| MU | 0.2209 | 1 |
+| Meta | 0.2601 | 1 |
 | Middle East | 0.2070 | 1 |
-| Monthly | 0.2271 | 1 |
-| NVDA | 0.1486 | 1 |
+| Pickleball | 0.2450 | 1 |
 | RTX | 0.0036 | 1 |
 | Rugby Top 14 | 0.2809 | 1 |
 | Soccer Transfers | 0.2401 | 1 |
+| Trump-Netanyahu | 0.1521 | 1 |
 | World | 0.0000 | 1 |
 | le mans | 0.2070 | 1 |
 
@@ -127,19 +133,19 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Market type | Mean Brier | n |
 | --- | --- | --- |
-| news_event | 0.1041 | 486 |
-| sports_outcome | 0.0972 | 235 |
+| news_event | 0.1114 | 513 |
+| sports_outcome | 0.0968 | 236 |
 | sports_prop | 0.2318 | 78 |
-| crypto_price | 0.1850 | 42 |
-| election | 0.1089 | 12 |
+| crypto_price | 0.1798 | 44 |
+| election | 0.1368 | 15 |
 | Unknown | 0.0363 | 1 |
 
 ## Data-Quality Tiers
 
 | Data-quality tier | Mean Brier | n |
 | --- | --- | --- |
-| high | 0.1162 | 642 |
-| low | 0.1211 | 201 |
+| high | 0.1215 | 674 |
+| low | 0.1211 | 202 |
 | Unknown | 0.1213 | 8 |
 | medium | 0.2434 | 3 |
 
@@ -147,18 +153,18 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Collection bucket | Mean Brier | n |
 | --- | --- | --- |
-| low_liquidity | 0.2017 | 375 |
+| low_liquidity | 0.2044 | 403 |
 | medium_horizon | 0.0574 | 328 |
 | short_horizon | 0.0528 | 54 |
 | top_volume | 0.0277 | 52 |
-| category_diverse | 0.0417 | 44 |
+| category_diverse | 0.0518 | 49 |
 | Unknown | 0.0363 | 1 |
 
 ## Short-Horizon Descriptive (excluded from primary)
 
-- Markets: 3036
-- Mean Brier: 0.1039
-- Trust vs Brier correlation: -0.2352 (n=3036)
+- Markets: 3115
+- Mean Brier: 0.1045
+- Trust vs Brier correlation: -0.2346 (n=3115)
 
 These markets had no eligible snapshot at least 24 hours before close. Descriptive only — not part of the pre-registered primary validation.
 
@@ -167,4 +173,4 @@ These markets had no eligible snapshot at least 24 hours before close. Descripti
 | Score version | Mean Brier | Trust correlation | n |
 | --- | --- | --- | --- |
 | v0.1 | 0.0208 | 0.4092 | 37 |
-| v0.2 | 0.1066 | -0.2743 | 3890 |
+| v0.2 | 0.1079 | -0.2788 | 4002 |
