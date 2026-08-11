@@ -1,16 +1,16 @@
 # EventLens Validation Report
 
-Generated: `2026-08-10T08:35:44Z`
+Generated: `2026-08-11T07:05:08Z`
 
-- Brier rows: 6920
-- Eligible Brier rows: 6920
-- Unique resolved markets: 4589
-- Primary analysis rows: 1003
-- Markets excluded from primary (no 24h-prior snapshot): 3586
-- Mean Brier: 0.1336
-- Trust vs Brier correlation: -0.4221 (n=1003)
-- Trust vs Brier excluding missing spreads: -0.3974 (n=754)
-- Trust vs Brier high-data-quality only: -0.3970 (n=744)
+- Brier rows: 7006
+- Eligible Brier rows: 7006
+- Unique resolved markets: 4665
+- Primary analysis rows: 1005
+- Markets excluded from primary (no 24h-prior snapshot): 3660
+- Mean Brier: 0.1334
+- Trust vs Brier correlation: -0.4220 (n=1005)
+- Trust vs Brier excluding missing spreads: -0.3978 (n=755)
+- Trust vs Brier high-data-quality only: -0.3974 (n=745)
 
 Primary statistics use the latest eligible snapshot observed at least 24 hours before close/resolution (pre-registered in METHODOLOGY.md). Markets with only same-day snapshots appear in the short-horizon descriptive section, not the headline.
 
@@ -19,8 +19,8 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | Trust bucket | Mean Brier | n |
 | --- | --- | --- |
 | 0-40 | 0.2118 | 146 |
-| 40-55 | 0.1564 | 565 |
-| 55-70 | 0.0544 | 243 |
+| 40-55 | 0.1562 | 566 |
+| 55-70 | 0.0542 | 244 |
 | 70-85 | 0.0314 | 46 |
 | 85-100 | 0.0140 | 3 |
 
@@ -28,8 +28,8 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Horizon bucket | Mean Brier | n |
 | --- | --- | --- |
-| 0-7d | 0.1770 | 415 |
-| 31-90d | 0.0865 | 319 |
+| 0-7d | 0.1766 | 416 |
+| 31-90d | 0.0863 | 320 |
 | 8-30d | 0.1234 | 253 |
 | 90d+ | 0.1131 | 15 |
 | Unknown | 0.0363 | 1 |
@@ -38,7 +38,7 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Category | Mean Brier | n |
 | --- | --- | --- |
-| Sports | 0.1397 | 338 |
+| Sports | 0.1392 | 339 |
 | Soccer | 0.0683 | 60 |
 | Weather | 0.0564 | 41 |
 | Solana | 0.2037 | 31 |
@@ -48,7 +48,7 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | Culture | 0.2199 | 23 |
 | 2026 FIFA World Cup | 0.0522 | 21 |
 | CPI | 0.0614 | 21 |
-| Politics | 0.0688 | 19 |
+| Politics | 0.0654 | 20 |
 | Macro Indicators | 0.1119 | 18 |
 | Trump | 0.1504 | 16 |
 | Elon | 0.2326 | 14 |
@@ -144,11 +144,11 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Market type | Mean Brier | n |
 | --- | --- | --- |
-| news_event | 0.1268 | 598 |
+| news_event | 0.1266 | 599 |
 | sports_outcome | 0.1043 | 248 |
 | sports_prop | 0.2386 | 87 |
 | crypto_price | 0.1825 | 50 |
-| election | 0.1275 | 18 |
+| election | 0.1208 | 19 |
 | Unknown | 0.0363 | 1 |
 | unverifiable_event | 0.1024 | 1 |
 
@@ -156,8 +156,8 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Data-quality tier | Mean Brier | n |
 | --- | --- | --- |
-| high | 0.1301 | 744 |
-| low | 0.1428 | 247 |
+| high | 0.1299 | 745 |
+| low | 0.1422 | 248 |
 | Unknown | 0.1213 | 8 |
 | medium | 0.2450 | 4 |
 
@@ -166,17 +166,17 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | Collection bucket | Mean Brier | n |
 | --- | --- | --- |
 | low_liquidity | 0.2092 | 509 |
-| medium_horizon | 0.0587 | 332 |
-| short_horizon | 0.0696 | 58 |
+| medium_horizon | 0.0585 | 333 |
+| short_horizon | 0.0684 | 59 |
 | top_volume | 0.0271 | 53 |
 | category_diverse | 0.0507 | 50 |
 | Unknown | 0.0363 | 1 |
 
 ## Short-Horizon Descriptive (excluded from primary)
 
-- Markets: 3586
-- Mean Brier: 0.1081
-- Trust vs Brier correlation: -0.2275 (n=3586)
+- Markets: 3660
+- Mean Brier: 0.1065
+- Trust vs Brier correlation: -0.2307 (n=3660)
 
 These markets had no eligible snapshot at least 24 hours before close. Descriptive only — not part of the pre-registered primary validation.
 
@@ -185,4 +185,4 @@ These markets had no eligible snapshot at least 24 hours before close. Descripti
 | Score version | Mean Brier | Trust correlation | n |
 | --- | --- | --- | --- |
 | v0.1 | 0.0208 | 0.4092 | 37 |
-| v0.2 | 0.1133 | -0.2790 | 4589 |
+| v0.2 | 0.1119 | -0.2816 | 4665 |
