@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-08-23T05:42:16Z",
+  "generated_at": "2026-08-23T17:41:36Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
-  "n_brier_rows": 8255,
-  "n_eligible_brier_rows": 8255,
-  "n_unique_resolved_markets": 5729,
-  "n_analysis_rows": 1174,
-  "n_markets_excluded_no_24h_snapshot": 4555,
+  "n_brier_rows": 8300,
+  "n_eligible_brier_rows": 8300,
+  "n_unique_resolved_markets": 5770,
+  "n_analysis_rows": 1178,
+  "n_markets_excluded_no_24h_snapshot": 4592,
   "short_horizon_descriptive": {
     "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
-    "n": 4555,
-    "mean_brier": 0.11065859313940724,
+    "n": 4592,
+    "mean_brier": 0.11003562619773519,
     "trust_vs_brier": {
-      "correlation": -0.24365412103477513,
-      "n": 4555
+      "correlation": -0.2455457174916312,
+      "n": 4592
     }
   },
-  "mean_brier": 0.1321843724446337,
+  "mean_brier": 0.13215998450764008,
   "trust_buckets": [
     {
       "bucket": "0-40",
-      "mean_brier": 0.22039084594594593,
-      "n": 185
+      "mean_brier": 0.22070752139037433,
+      "n": 187
     },
     {
       "bucket": "40-55",
@@ -30,8 +30,8 @@
     },
     {
       "bucket": "55-70",
-      "mean_brier": 0.05137739735099338,
-      "n": 302
+      "mean_brier": 0.051039416118421055,
+      "n": 304
     },
     {
       "bucket": "70-85",
@@ -47,13 +47,13 @@
   "horizon_buckets": [
     {
       "group": "0-7d",
-      "mean_brier": 0.17834082305194807,
-      "n": 462
+      "mean_brier": 0.17864969881465517,
+      "n": 464
     },
     {
       "group": "31-90d",
-      "mean_brier": 0.08102279999999999,
-      "n": 420
+      "mean_brier": 0.08063882582938388,
+      "n": 422
     },
     {
       "group": "8-30d",
@@ -74,8 +74,8 @@
   "categories": [
     {
       "group": "Sports",
-      "mean_brier": 0.14493869934210526,
-      "n": 380
+      "mean_brier": 0.14473102669270835,
+      "n": 384
     },
     {
       "group": "Soccer",
@@ -631,13 +631,13 @@
     },
     {
       "group": "sports_outcome",
-      "mean_brier": 0.11069803158844765,
-      "n": 277
+      "mean_brier": 0.11040486875,
+      "n": 280
     },
     {
       "group": "sports_prop",
-      "mean_brier": 0.23791793181818183,
-      "n": 99
+      "mean_brier": 0.2380387525,
+      "n": 100
     },
     {
       "group": "election",
@@ -663,8 +663,8 @@
   "data_quality_tiers": [
     {
       "group": "high",
-      "mean_brier": 0.12880193995510664,
-      "n": 891
+      "mean_brier": 0.12878495754189945,
+      "n": 895
     },
     {
       "group": "low",
@@ -685,13 +685,13 @@
   "collection_buckets": [
     {
       "group": "low_liquidity",
-      "mean_brier": 0.21186460130434784,
-      "n": 575
+      "mean_brier": 0.21199678639514732,
+      "n": 577
     },
     {
       "group": "medium_horizon",
-      "mean_brier": 0.05778358665105387,
-      "n": 427
+      "mean_brier": 0.05751421911421912,
+      "n": 429
     },
     {
       "group": "short_horizon",
@@ -715,16 +715,16 @@
     }
   ],
   "trust_vs_brier": {
-    "correlation": -0.44166873992381545,
-    "n": 1174
+    "correlation": -0.44339994678902667,
+    "n": 1178
   },
   "trust_vs_brier_excluding_missing_spread": {
-    "correlation": -0.4193705654191514,
-    "n": 902
+    "correlation": -0.42146945779754386,
+    "n": 906
   },
   "trust_vs_brier_high_data_quality_only": {
-    "correlation": -0.4190804306547015,
-    "n": 891
+    "correlation": -0.4211961628618642,
+    "n": 895
   },
   "by_score_version": [
     {
@@ -738,12 +738,12 @@
     },
     {
       "score_version": "v0.2",
-      "mean_brier": 0.11475800069820212,
+      "mean_brier": 0.11424303262564992,
       "trust_vs_brier": {
-        "correlation": -0.2893010911892514,
-        "n": 5729
+        "correlation": -0.291176838992798,
+        "n": 5770
       },
-      "n": 5729
+      "n": 5770
     }
   ]
 }
