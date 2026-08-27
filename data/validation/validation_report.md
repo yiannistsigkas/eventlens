@@ -1,16 +1,16 @@
 # EventLens Validation Report
 
-Generated: `2026-08-26T07:36:56Z`
+Generated: `2026-08-27T08:30:22Z`
 
-- Brier rows: 8636
-- Eligible Brier rows: 8636
-- Unique resolved markets: 5986
-- Primary analysis rows: 1250
-- Markets excluded from primary (no 24h-prior snapshot): 4736
-- Mean Brier: 0.1295
-- Trust vs Brier correlation: -0.4429 (n=1250)
-- Trust vs Brier excluding missing spreads: -0.4183 (n=970)
-- Trust vs Brier high-data-quality only: -0.4180 (n=959)
+- Brier rows: 8822
+- Eligible Brier rows: 8822
+- Unique resolved markets: 6116
+- Primary analysis rows: 1285
+- Markets excluded from primary (no 24h-prior snapshot): 4831
+- Mean Brier: 0.1286
+- Trust vs Brier correlation: -0.4326 (n=1285)
+- Trust vs Brier excluding missing spreads: -0.4094 (n=992)
+- Trust vs Brier high-data-quality only: -0.4091 (n=981)
 
 Primary statistics use the latest eligible snapshot observed at least 24 hours before close/resolution (pre-registered in METHODOLOGY.md). Markets with only same-day snapshots appear in the short-horizon descriptive section, not the headline.
 
@@ -18,9 +18,9 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Trust bucket | Mean Brier | n |
 | --- | --- | --- |
-| 0-40 | 0.2200 | 198 |
-| 40-55 | 0.1517 | 663 |
-| 55-70 | 0.0488 | 334 |
+| 0-40 | 0.2206 | 200 |
+| 40-55 | 0.1488 | 687 |
+| 55-70 | 0.0508 | 343 |
 | 70-85 | 0.0278 | 52 |
 | 85-100 | 0.0140 | 3 |
 
@@ -28,9 +28,9 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Horizon bucket | Mean Brier | n |
 | --- | --- | --- |
-| 0-7d | 0.1763 | 475 |
-| 31-90d | 0.0766 | 466 |
-| 8-30d | 0.1387 | 291 |
+| 31-90d | 0.0770 | 497 |
+| 0-7d | 0.1760 | 477 |
+| 8-30d | 0.1394 | 293 |
 | 90d+ | 0.1250 | 17 |
 | Unknown | 0.0363 | 1 |
 
@@ -38,13 +38,13 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Category | Mean Brier | n |
 | --- | --- | --- |
-| Sports | 0.1431 | 399 |
-| Politics | 0.0556 | 77 |
-| Soccer | 0.0766 | 70 |
-| Weather | 0.0517 | 52 |
+| Sports | 0.1433 | 400 |
+| Soccer | 0.0635 | 85 |
+| Politics | 0.0549 | 78 |
+| Weather | 0.0507 | 53 |
+| Economy | 0.0902 | 35 |
 | Solana | 0.2080 | 34 |
 | Culture | 0.2543 | 33 |
-| Economy | 0.0683 | 30 |
 | Tour de France | 0.0131 | 29 |
 | UECL | 0.2228 | 28 |
 | 2026 FIFA World Cup | 0.0522 | 21 |
@@ -61,11 +61,13 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | FIFA World Cup | 0.0305 | 11 |
 | Awards | 0.0883 | 10 |
 | Chess | 0.0896 | 10 |
+| Florida | 0.0970 | 10 |
+| UCL | 0.2457 | 10 |
 | Formula 1 | 0.1839 | 9 |
 | MLB | 0.1860 | 9 |
-| UCL | 0.2359 | 9 |
 | banks | 0.0937 | 9 |
 | NBA | 0.0867 | 8 |
+| TV | 0.1599 | 8 |
 | UEL | 0.2401 | 8 |
 | AI | 0.0868 | 7 |
 | Primaries | 0.0165 | 7 |
@@ -85,7 +87,6 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | NFLX | 0.1321 | 5 |
 | AAPL | 0.1693 | 4 |
 | CS2 | 0.2540 | 4 |
-| Florida | 0.0039 | 4 |
 | KPIs | 0.2048 | 4 |
 | MSFT | 0.1780 | 4 |
 | Oil | 0.0001 | 4 |
@@ -103,7 +104,6 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 | Major League Pickleball | 0.2246 | 3 |
 | NVDA | 0.2093 | 3 |
 | South Korea | 0.0468 | 3 |
-| TV | 0.2088 | 3 |
 | Zambia | 0.0117 | 3 |
 | BTS | 0.1972 | 2 |
 | Bitcoin | 0.0055 | 2 |
@@ -159,10 +159,10 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Market type | Mean Brier | n |
 | --- | --- | --- |
-| news_event | 0.1250 | 716 |
+| news_event | 0.1233 | 743 |
 | sports_outcome | 0.1088 | 293 |
-| sports_prop | 0.2387 | 102 |
-| election | 0.0744 | 83 |
+| sports_prop | 0.2385 | 103 |
+| election | 0.0792 | 90 |
 | crypto_price | 0.1831 | 54 |
 | Unknown | 0.0363 | 1 |
 | unverifiable_event | 0.1024 | 1 |
@@ -171,8 +171,8 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Data-quality tier | Mean Brier | n |
 | --- | --- | --- |
-| high | 0.1260 | 959 |
-| low | 0.1402 | 278 |
+| high | 0.1265 | 981 |
+| low | 0.1339 | 291 |
 | Unknown | 0.1213 | 8 |
 | medium | 0.2406 | 5 |
 
@@ -180,18 +180,18 @@ Primary statistics use the latest eligible snapshot observed at least 24 hours b
 
 | Collection bucket | Mean Brier | n |
 | --- | --- | --- |
-| low_liquidity | 0.2130 | 592 |
-| medium_horizon | 0.0566 | 479 |
-| short_horizon | 0.0659 | 71 |
+| low_liquidity | 0.2131 | 595 |
+| medium_horizon | 0.0583 | 510 |
+| short_horizon | 0.0650 | 72 |
 | category_diverse | 0.0470 | 54 |
 | top_volume | 0.0271 | 53 |
 | Unknown | 0.0363 | 1 |
 
 ## Short-Horizon Descriptive (excluded from primary)
 
-- Markets: 4736
-- Mean Brier: 0.1096
-- Trust vs Brier correlation: -0.2488 (n=4736)
+- Markets: 4831
+- Mean Brier: 0.1100
+- Trust vs Brier correlation: -0.2482 (n=4831)
 
 These markets had no eligible snapshot at least 24 hours before close. Descriptive only — not part of the pre-registered primary validation.
 
@@ -200,4 +200,4 @@ These markets had no eligible snapshot at least 24 hours before close. Descripti
 | Score version | Mean Brier | Trust correlation | n |
 | --- | --- | --- | --- |
 | v0.1 | 0.0208 | 0.4092 | 37 |
-| v0.2 | 0.1135 | -0.2939 | 5986 |
+| v0.2 | 0.1136 | -0.2912 | 6116 |
