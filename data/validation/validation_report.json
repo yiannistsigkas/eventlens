@@ -1,42 +1,42 @@
 {
-  "generated_at": "2026-09-17T13:43:09Z",
+  "generated_at": "2026-09-21T12:01:20Z",
   "analysis_unit": "one snapshot per resolved market, selected by the primary snapshot rule",
   "primary_snapshot_rule": "latest eligible snapshot at least 24h before close",
-  "n_brier_rows": 12513,
-  "n_eligible_brier_rows": 12513,
-  "n_unique_resolved_markets": 8246,
-  "n_analysis_rows": 2195,
-  "n_markets_excluded_no_24h_snapshot": 6051,
+  "n_brier_rows": 12885,
+  "n_eligible_brier_rows": 12885,
+  "n_unique_resolved_markets": 8440,
+  "n_analysis_rows": 2304,
+  "n_markets_excluded_no_24h_snapshot": 6136,
   "short_horizon_descriptive": {
     "note": "markets without any eligible snapshot >=24h before close; not part of the primary validation",
-    "n": 6051,
-    "mean_brier": 0.11228215621384896,
+    "n": 6136,
+    "mean_brier": 0.11282764740873534,
     "trust_vs_brier": {
-      "correlation": -0.2483640500463365,
-      "n": 6051
+      "correlation": -0.24720448881296167,
+      "n": 6136
     }
   },
-  "mean_brier": 0.12250981936218677,
+  "mean_brier": 0.1218928664279514,
   "trust_buckets": [
     {
       "bucket": "0-40",
-      "mean_brier": 0.2197992304913295,
-      "n": 346
+      "mean_brier": 0.2210404777027027,
+      "n": 370
     },
     {
       "bucket": "40-55",
-      "mean_brier": 0.14541113916591114,
-      "n": 1103
+      "mean_brier": 0.14420713608695654,
+      "n": 1150
     },
     {
       "bucket": "55-70",
-      "mean_brier": 0.045424391703377386,
-      "n": 681
+      "mean_brier": 0.044279784615384614,
+      "n": 715
     },
     {
       "bucket": "70-85",
-      "mean_brier": 0.024099383064516127,
-      "n": 62
+      "mean_brier": 0.022970821969696967,
+      "n": 66
     },
     {
       "bucket": "85-100",
@@ -47,23 +47,23 @@
   "horizon_buckets": [
     {
       "group": "31-90d",
-      "mean_brier": 0.07743965863549618,
-      "n": 1048
+      "mean_brier": 0.07552365520361991,
+      "n": 1105
     },
     {
       "group": "0-7d",
-      "mean_brier": 0.18063610382308845,
-      "n": 667
+      "mean_brier": 0.1834712647270115,
+      "n": 696
     },
     {
       "group": "8-30d",
-      "mean_brier": 0.13891329382022471,
-      "n": 445
+      "mean_brier": 0.13657985698924732,
+      "n": 465
     },
     {
       "group": "90d+",
-      "mean_brier": 0.15927364705882352,
-      "n": 34
+      "mean_brier": 0.1660973310810811,
+      "n": 37
     },
     {
       "group": "Unknown",
@@ -74,13 +74,13 @@
   "categories": [
     {
       "group": "Sports",
-      "mean_brier": 0.14058403260869565,
-      "n": 598
+      "mean_brier": 0.14081250327332243,
+      "n": 611
     },
     {
       "group": "Politics",
-      "mean_brier": 0.05054207857142857,
-      "n": 210
+      "mean_brier": 0.04946178539823009,
+      "n": 226
     },
     {
       "group": "Soccer",
@@ -98,19 +98,19 @@
       "n": 77
     },
     {
-      "group": "AI",
-      "mean_brier": 0.017897641509433963,
-      "n": 53
+      "group": "Finance",
+      "mean_brier": 0.2074530308219178,
+      "n": 73
     },
     {
-      "group": "Finance",
-      "mean_brier": 0.1874385576923077,
-      "n": 52
+      "group": "AI",
+      "mean_brier": 0.027890836363636363,
+      "n": 55
     },
     {
       "group": "Movies",
-      "mean_brier": 0.22398943617021277,
-      "n": 47
+      "mean_brier": 0.2249495612244898,
+      "n": 49
     },
     {
       "group": "Culture",
@@ -173,14 +173,19 @@
       "n": 21
     },
     {
-      "group": "Tennis",
-      "mean_brier": 0.23662369736842107,
-      "n": 19
+      "group": "MLB",
+      "mean_brier": 0.0946802875,
+      "n": 20
     },
     {
       "group": "Formula 1",
-      "mean_brier": 0.10890870833333334,
-      "n": 18
+      "mean_brier": 0.11641363157894737,
+      "n": 19
+    },
+    {
+      "group": "Tennis",
+      "mean_brier": 0.23662369736842107,
+      "n": 19
     },
     {
       "group": "Macro Indicators",
@@ -206,11 +211,6 @@
       "group": "Tech",
       "mean_brier": 0.1975753,
       "n": 15
-    },
-    {
-      "group": "MLB",
-      "mean_brier": 0.13515978571428572,
-      "n": 14
     },
     {
       "group": "gaming",
@@ -253,8 +253,23 @@
       "n": 10
     },
     {
+      "group": "Lacrosse",
+      "mean_brier": 0.1514322,
+      "n": 10
+    },
+    {
+      "group": "MLB National League",
+      "mean_brier": 0.0037472500000000006,
+      "n": 10
+    },
+    {
       "group": "OPEN",
-      "mean_brier": 0.24317855555555556,
+      "mean_brier": 0.24391072500000002,
+      "n": 10
+    },
+    {
+      "group": "Russia",
+      "mean_brier": 0.0013440833333333328,
       "n": 9
     },
     {
@@ -263,8 +278,18 @@
       "n": 9
     },
     {
+      "group": "World",
+      "mean_brier": 0.004991833333333333,
+      "n": 9
+    },
+    {
       "group": "banks",
       "mean_brier": 0.09369147222222221,
+      "n": 9
+    },
+    {
+      "group": "putin",
+      "mean_brier": 4.991666666666671e-05,
       "n": 9
     },
     {
@@ -298,11 +323,6 @@
       "n": 7
     },
     {
-      "group": "Lacrosse",
-      "mean_brier": 0.09661028571428572,
-      "n": 7
-    },
-    {
       "group": "Brazil",
       "mean_brier": 0.0003206249999999998,
       "n": 6
@@ -320,11 +340,6 @@
     {
       "group": "Inflation",
       "mean_brier": 0.11679374999999999,
-      "n": 6
-    },
-    {
-      "group": "MLB National League",
-      "mean_brier": 0.0004041666666666673,
       "n": 6
     },
     {
@@ -355,6 +370,11 @@
     {
       "group": "BOE",
       "mean_brier": 0.0038087499999999996,
+      "n": 5
+    },
+    {
+      "group": "BOJ",
+      "mean_brier": 0.018524299999999997,
       "n": 5
     },
     {
@@ -403,6 +423,11 @@
       "n": 5
     },
     {
+      "group": "PLL",
+      "mean_brier": 0.1393865,
+      "n": 5
+    },
+    {
       "group": "Privates",
       "mean_brier": 0.235445,
       "n": 5
@@ -410,6 +435,11 @@
     {
       "group": "Reality TV",
       "mean_brier": 0.15425044999999998,
+      "n": 5
+    },
+    {
+      "group": "UFC",
+      "mean_brier": 0.15114624999999998,
       "n": 5
     },
     {
@@ -448,13 +478,13 @@
       "n": 4
     },
     {
-      "group": "TSLA",
-      "mean_brier": 0.3645175625,
+      "group": "Russia Election",
+      "mean_brier": 0.01195375,
       "n": 4
     },
     {
-      "group": "UFC",
-      "mean_brier": 0.1878765625,
+      "group": "TSLA",
+      "mean_brier": 0.3645175625,
       "n": 4
     },
     {
@@ -470,6 +500,11 @@
     {
       "group": "AMZN",
       "mean_brier": 0.23962341666666667,
+      "n": 3
+    },
+    {
+      "group": "Attackman",
+      "mean_brier": 0.10704374999999998,
       "n": 3
     },
     {
@@ -523,11 +558,6 @@
       "n": 3
     },
     {
-      "group": "PLL",
-      "mean_brier": 0.12376916666666665,
-      "n": 3
-    },
-    {
       "group": "RBNZ",
       "mean_brier": 0.009308416666666666,
       "n": 3
@@ -550,11 +580,6 @@
     {
       "group": "AAA",
       "mean_brier": 0.11582500000000001,
-      "n": 2
-    },
-    {
-      "group": "Attackman",
-      "mean_brier": 0.0343125,
       "n": 2
     },
     {
@@ -603,13 +628,13 @@
       "n": 2
     },
     {
-      "group": "Pickleball",
-      "mean_brier": 0.122527625,
+      "group": "NFL",
+      "mean_brier": 0.1275625,
       "n": 2
     },
     {
-      "group": "Russia",
-      "mean_brier": 0.005749249999999998,
+      "group": "Pickleball",
+      "mean_brier": 0.122527625,
       "n": 2
     },
     {
@@ -655,6 +680,11 @@
     {
       "group": "Arnold Allen",
       "mean_brier": 0.21622500000000003,
+      "n": 1
+    },
+    {
+      "group": "CFB",
+      "mean_brier": 0.275625,
       "n": 1
     },
     {
@@ -748,8 +778,8 @@
       "n": 1
     },
     {
-      "group": "NFL",
-      "mean_brier": 0.03422500000000002,
+      "group": "Premier League Lacrosse",
+      "mean_brier": 0.28090000000000004,
       "n": 1
     },
     {
@@ -798,8 +828,8 @@
       "n": 1
     },
     {
-      "group": "World",
-      "mean_brier": 1e-06,
+      "group": "World Elections",
+      "mean_brier": 0.00015625000000000003,
       "n": 1
     },
     {
@@ -823,11 +853,6 @@
       "n": 1
     },
     {
-      "group": "putin",
-      "mean_brier": 0.00013225,
-      "n": 1
-    },
-    {
       "group": "resign",
       "mean_brier": 2.5e-07,
       "n": 1
@@ -841,23 +866,23 @@
   "market_types": [
     {
       "group": "news_event",
-      "mean_brier": 0.12040501485148514,
-      "n": 1313
+      "mean_brier": 0.12121769841269842,
+      "n": 1386
     },
     {
       "group": "sports_outcome",
-      "mean_brier": 0.10328121635730858,
-      "n": 431
+      "mean_brier": 0.10367526830663615,
+      "n": 437
     },
     {
       "group": "election",
-      "mean_brier": 0.06879062387387387,
-      "n": 222
+      "mean_brier": 0.06253263571428572,
+      "n": 245
     },
     {
       "group": "sports_prop",
-      "mean_brier": 0.2364266355421687,
-      "n": 166
+      "mean_brier": 0.23365388150289018,
+      "n": 173
     },
     {
       "group": "crypto_price",
@@ -878,18 +903,18 @@
   "data_quality_tiers": [
     {
       "group": "high",
-      "mean_brier": 0.1235936491821771,
-      "n": 1773
+      "mean_brier": 0.12381747954790097,
+      "n": 1858
     },
     {
       "group": "low",
-      "mean_brier": 0.11518765841584157,
-      "n": 404
+      "mean_brier": 0.1103778468309859,
+      "n": 426
     },
     {
       "group": "medium",
-      "mean_brier": 0.22714339999999997,
-      "n": 10
+      "mean_brier": 0.23308825,
+      "n": 12
     },
     {
       "group": "Unknown",
@@ -900,13 +925,13 @@
   "collection_buckets": [
     {
       "group": "medium_horizon",
-      "mean_brier": 0.06446192246111619,
-      "n": 1093
+      "mean_brier": 0.06329646745689654,
+      "n": 1160
     },
     {
       "group": "low_liquidity",
-      "mean_brier": 0.21380712556818182,
-      "n": 880
+      "mean_brier": 0.21467052859477123,
+      "n": 918
     },
     {
       "group": "short_horizon",
@@ -915,8 +940,8 @@
     },
     {
       "group": "category_diverse",
-      "mean_brier": 0.03683466666666667,
-      "n": 69
+      "mean_brier": 0.035471328767123285,
+      "n": 73
     },
     {
       "group": "top_volume",
@@ -930,16 +955,16 @@
     }
   ],
   "trust_vs_brier": {
-    "correlation": -0.43469790019742693,
-    "n": 2195
+    "correlation": -0.4424049425304946,
+    "n": 2304
   },
   "trust_vs_brier_excluding_missing_spread": {
-    "correlation": -0.4088729549750967,
-    "n": 1789
+    "correlation": -0.4158592098045447,
+    "n": 1876
   },
   "trust_vs_brier_high_data_quality_only": {
-    "correlation": -0.40840986827276327,
-    "n": 1773
+    "correlation": -0.4154121095428217,
+    "n": 1858
   },
   "by_score_version": [
     {
@@ -953,12 +978,12 @@
     },
     {
       "score_version": "v0.2",
-      "mean_brier": 0.1148508718469561,
+      "mean_brier": 0.1151520755035545,
       "trust_vs_brier": {
-        "correlation": -0.29936616422085166,
-        "n": 8246
+        "correlation": -0.30100709258132397,
+        "n": 8440
       },
-      "n": 8246
+      "n": 8440
     }
   ]
 }
